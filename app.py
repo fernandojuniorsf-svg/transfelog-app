@@ -1,5 +1,9 @@
+```python
+```python
 import streamlit as st
 from datetime import datetime
+import base64
+import os
 
 # ============================================================
 # CONFIGURAÇÃO DA PÁGINA
@@ -24,53 +28,32 @@ st.markdown("""
     }
     .app-header {
         background: linear-gradient(135deg, #1a2332 0%, #243447 40%, #4A9BA8 100%);
-        padding: 1.8rem 2rem;
+        padding: 2.5rem 2rem;
         border-radius: 20px;
         margin-bottom: 2rem;
         box-shadow: 0 12px 40px rgba(74, 155, 168, 0.2);
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 1.2rem;
+        text-align: center;
     }
-    .logo-mark {
-        width: 48px;
-        height: 48px;
-        position: relative;
+    .app-header img {
+        height: 90px;
+        border-radius: 14px;
+        object-fit: contain;
+        margin-bottom: 0.8rem;
     }
-    .logo-t {
-        width: 24px;
-        height: 28px;
-        background: linear-gradient(135deg, #b8c4cc 0%, #8a9baa 100%);
-        transform: skewX(-12deg);
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        border-radius: 3px;
-    }
-    .logo-f {
-        width: 24px;
-        height: 28px;
-        background: linear-gradient(135deg, #4A9BA8 0%, #3a7f8a 100%);
-        transform: skewX(-12deg);
-        position: absolute;
-        bottom: 4px;
-        right: 4px;
-        border-radius: 3px;
-    }
-    .header-info {
-        flex: 1;
-    }
-    .header-info h1 {
+    .app-header h1 {
         color: #ffffff;
-        font-size: 1.6rem;
+        font-size: 1.8rem;
         font-weight: 700;
         margin: 0;
         letter-spacing: -0.3px;
     }
-    .header-info p {
+    .app-header p {
         color: rgba(255,255,255,0.6);
         font-size: 0.8rem;
-        margin: 0.2rem 0 0 0;
+        margin: 0.3rem 0 0 0;
     }
     .section-label {
         color: #1a2332;
@@ -285,14 +268,13 @@ CODIGOS_TIER = {
     "06121990": "BASE",
 }
 
-# Cupons temporários de desconto por km
 CUPONS_DESCONTO = {
-    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
+    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "2026-07-31"},
     "FRETE20": {"desconto_pct": 20, "descricao": "20% de desconto", "validade": "2026-07-15"},
-    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de desconto (inaugura\u00e7\u00e3o)", "validade": "2026-08-31"},
+    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% inaugura\u00e7\u00e3o", "validade": "2026-08-31"},
 }
 
-FATOR_CUBAGEM = 300  # kg/m³ padrão rodoviário
+FATOR_CUBAGEM = 300
 
 PRECOS = {
     "BASE": {
@@ -466,31 +448,38 @@ def calcular_cotacao(veiculo, tier, km_ida, n_pontos, tipo_carga,
 
 
 # ============================================================
-# NAVEGAÇÃO (ABAS)
+# HEADER COM LOGO GRANDE
 # ============================================================
 
-st.markdown("""
+LOGO_FILENAME = "ChatGPT Image Jun 20, 2026, 04_01_07 PM(1).png"
+
+logo_html = ""
+if os.path.exists(LOGO_FILENAME):
+    with open(LOGO_FILENAME, "rb") as f:
+        logo_b64 = base64.b64encode(f.read()).decode()
+    logo_html = f'<img src="data:image/png;base64,{logo_b64}">'
+
+st.markdown(f"""
 <div class="app-header">
-    <div class="logo-mark">
-        <div class="logo-t"></div>
-        <div class="logo-f"></div>
-    </div>
-    <div class="header-info">
-        <h1>TRANSFELOG</h1>
-        <p>Grupo Transfelog do Brasil</p>
-    </div>
+    {logo_html}
+    <h1>TRANSFELOG</h1>
+    <p>Grupo Transfelog do Brasil</p>
 </div>
 """, unsafe_allow_html=True)
 
+# ============================================================
+# NAVEGAÇÃO
+# ============================================================
+
 aba = st.radio(
-    "Navega\u00e7\u00e3o",
+    "Menu",
     ["Cota\u00e7\u00e3o de Frete", "Cadastro de Motorista"],
     horizontal=True,
     label_visibility="collapsed"
 )
 
 # ============================================================
-# ABA 1 - COTAÇÃO DE FRETE (CLIENTE)
+# ABA 1 - COTAÇÃO DE FRETE
 # ============================================================
 if aba == "Cota\u00e7\u00e3o de Frete":
 
@@ -512,7 +501,7 @@ if aba == "Cota\u00e7\u00e3o de Frete":
 
     if tier_ativo:
 
-        # Cupom de desconto
+        # Cupom
         st.markdown('<div class="section-label">Cupom de desconto</div>', unsafe_allow_html=True)
         cupom_input = st.text_input(
             "Cupom",
@@ -527,7 +516,7 @@ if aba == "Cota\u00e7\u00e3o de Frete":
             else:
                 st.caption("Cupom inv\u00e1lido ou expirado.")
 
-        # Veículo
+        # Ve\u00edculo
         st.markdown('<div class="section-label">Ve\u00edculo</div>', unsafe_allow_html=True)
         opcoes_veiculo = list(VEICULOS_INFO.keys())
         veiculo_selecionado = st.selectbox(
@@ -550,7 +539,7 @@ if aba == "Cota\u00e7\u00e3o de Frete":
             else:
                 st.caption("Ve\u00edculo exclusivo")
 
-        # Peso e Volume (cubagem)
+        # Peso e Volume
         st.markdown('<div class="section-label">Peso e volume da carga</div>', unsafe_allow_html=True)
         col_peso, col_vol = st.columns(2)
         with col_peso:
@@ -562,9 +551,9 @@ if aba == "Cota\u00e7\u00e3o de Frete":
         if peso_cubado > peso_real:
             st.caption(f"Peso cubado: {peso_cubado:.0f} kg (volume \u00d7 300). Cobrado pelo volume.")
         else:
-            st.caption(f"Peso real maior que cubado. Cobrado pelo peso.")
+            st.caption(f"Cobrado pelo peso real ({peso_real:.0f} kg).")
 
-        # Distância e Paradas
+        # Percurso
         st.markdown('<div class="section-label">Percurso</div>', unsafe_allow_html=True)
         col_km, col_paradas = st.columns(2)
         with col_km:
@@ -581,11 +570,11 @@ if aba == "Cota\u00e7\u00e3o de Frete":
 
         st.markdown('<span class="locked-badge">Roteirizador autom\u00e1tico \u2014 dispon\u00edvel em breve</span>', unsafe_allow_html=True)
 
-        # Período
+        # Per\u00edodo
         st.markdown('<div class="section-label">Per\u00edodo</div>', unsafe_allow_html=True)
         adicional = st.selectbox("Per\u00edodo", list(ADICIONAIS.keys()), label_visibility="collapsed")
 
-        # Proteção
+        # Prote\u00e7\u00e3o
         st.markdown('<div class="section-label">Prote\u00e7\u00e3o de carga</div>', unsafe_allow_html=True)
         col_p1, col_p2 = st.columns([1, 2])
         with col_p1:
@@ -599,10 +588,10 @@ if aba == "Cota\u00e7\u00e3o de Frete":
             vp = calcular_protecao(valor_mercadoria, tier_ativo)
             st.caption(f"Prote\u00e7\u00e3o: R$ {vp:.2f}")
 
-        # Aviso de pedágio
+        # Aviso
         st.markdown('<div class="info-box">Ped\u00e1gio, taxas de acesso e estadias n\u00e3o inclusos. Cobrados \u00e0 parte conforme percurso.</div>', unsafe_allow_html=True)
 
-        # Botão calcular
+        # Bot\u00e3o
         st.markdown("")
         calcular = st.button("CALCULAR COTA\u00c7\u00c3O", use_container_width=True)
 
@@ -644,7 +633,6 @@ if aba == "Cota\u00e7\u00e3o de Frete":
             </div>
             """, unsafe_allow_html=True)
 
-            # Detalhamento
             detalhes_html = f"""
             <div class="breakdown-card">
                 <div class="breakdown-row">
@@ -694,7 +682,6 @@ if aba == "Cota\u00e7\u00e3o de Frete":
             """
             st.markdown(detalhes_html, unsafe_allow_html=True)
 
-            # Texto para copiar
             st.markdown("")
             msg = f"""*TRANSFELOG | Cota\u00e7\u00e3o de Frete*
 
@@ -703,7 +690,7 @@ Dist\u00e2ncia: {km_ida} km (cobrado: {resultado['km_cobrado']:.0f} km)
 Pontos de entrega: {n_paradas}
 Per\u00edodo: {adicional}
 {'Prote\u00e7\u00e3o de carga: Inclusa' if protecao_ativa else ''}
-{'Cupom aplicado: ' + cupom_dados['descricao'] if cupom_dados else ''}
+{'Cupom: ' + cupom_dados['descricao'] if cupom_dados else ''}
 
 *TOTAL: R$ {resultado['total']:,.2f}*
 Ped\u00e1gio e taxas cobrados \u00e0 parte.
@@ -724,11 +711,10 @@ transfelog.streamlit.app"""
 elif aba == "Cadastro de Motorista":
 
     st.markdown('<div class="section-label">Cadastro para aprova\u00e7\u00e3o</div>', unsafe_allow_html=True)
-    st.caption("Preencha todos os campos e envie seus documentos. Ap\u00f3s an\u00e1lise, voc\u00ea receber\u00e1 seu acesso.")
+    st.caption("Preencha todos os campos e envie seus documentos. Ap\u00f3s an\u00e1lise, voc\u00ea receber\u00e1 seu acesso em at\u00e9 48 horas.")
 
     st.markdown("")
 
-    # Dados pessoais
     nome_completo = st.text_input("Nome completo")
     endereco = st.text_input("Endere\u00e7o completo (rua, n\u00famero, bairro, cidade, estado)")
     telefone = st.text_input("Telefone (WhatsApp)")
@@ -753,14 +739,14 @@ elif aba == "Cadastro de Motorista":
     with col_cap2:
         capacidade_volume = st.number_input("Capacidade de volume (m\u00b3)", min_value=1.0, value=18.0, step=1.0)
 
-    st.markdown('<div class="section-label">Valor desejado</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">Valor desejado por km</div>', unsafe_allow_html=True)
     valor_km_desejado = st.number_input(
-        "Quanto deseja receber por km (R$)",
+        "Quanto deseja receber por km rodado (R$)",
         min_value=1.0,
         max_value=20.0,
         value=5.00,
         step=0.50,
-        help="Valor por km que voc\u00ea gostaria de receber. Sujeito a aprova\u00e7\u00e3o."
+        help="Sujeito a aprova\u00e7\u00e3o conforme tabela vigente."
     )
 
     st.markdown('<div class="section-label">Disponibilidade</div>', unsafe_allow_html=True)
@@ -772,44 +758,41 @@ elif aba == "Cadastro de Motorista":
 
     horario = st.selectbox(
         "Hor\u00e1rio de prefer\u00eancia",
-        ["Integral (08h - 20h)", "Manh\u00e3 (06h - 14h)", "Tarde (12h - 20h)", "Noturno (18h - 06h)", "Flex\u00edvel"]
+        ["Integral (08h \u00e0s 20h)", "Manh\u00e3 (06h \u00e0s 14h)", "Tarde (12h \u00e0s 20h)", "Noturno (18h \u00e0s 06h)", "Flex\u00edvel"]
     )
 
-    st.markdown('<div class="section-label">Documentos (obrigat\u00f3rios)</div>', unsafe_allow_html=True)
-    st.caption("Envie fotos leg\u00edveis dos documentos abaixo.")
+    st.markdown('<div class="section-label">Documentos</div>', unsafe_allow_html=True)
+    st.caption("Envie fotos leg\u00edveis. Formatos aceitos: PNG, JPG ou PDF.")
 
     cnh_upload = st.file_uploader("CNH (frente e verso)", type=["png", "jpg", "jpeg", "pdf"], key="cnh")
     doc_veiculo_upload = st.file_uploader("Documento do ve\u00edculo (CRLV)", type=["png", "jpg", "jpeg", "pdf"], key="doc_veic")
     foto_veiculo = st.file_uploader("Foto do ve\u00edculo (opcional)", type=["png", "jpg", "jpeg"], key="foto_veic")
 
     st.markdown("")
-
-    # Termos
     aceite_termos = st.checkbox("Declaro que as informa\u00e7\u00f5es s\u00e3o verdadeiras e aceito os termos de parceria.")
 
     st.markdown("")
-    enviar = st.button("ENVIAR CADASTRO PARA APROVA\u00c7\u00c3O", use_container_width=True)
+    enviar = st.button("ENVIAR CADASTRO", use_container_width=True)
 
     if enviar:
         campos_obrigatorios = [nome_completo, endereco, telefone, email, placa, cnh_upload, doc_veiculo_upload]
         if not all(campos_obrigatorios):
-            st.error("Preencha todos os campos obrigat\u00f3rios e anexe CNH + documento do ve\u00edculo.")
+            st.error("Preencha todos os campos obrigat\u00f3rios e anexe CNH + CRLV.")
         elif not aceite_termos:
-            st.error("Voc\u00ea precisa aceitar os termos para enviar.")
+            st.error("Aceite os termos para enviar.")
         elif len(disponibilidade) == 0:
             st.error("Selecione ao menos um dia de disponibilidade.")
         else:
             st.markdown(f"""
             <div class="success-box">
-                Cadastro enviado com sucesso! Seus documentos est\u00e3o em an\u00e1lise.<br>
-                Voc\u00ea receber\u00e1 uma resposta em at\u00e9 48 horas no e-mail: <b>{email}</b>
+                Cadastro enviado com sucesso! Documentos em an\u00e1lise.<br>
+                Retorno em at\u00e9 48h no e-mail: <b>{email}</b>
             </div>
             """, unsafe_allow_html=True)
 
-            # Resumo
             st.markdown("")
-            st.caption("Resumo do cadastro:")
-            st.markdown(f"""
+            st.caption("Resumo:")
+            resumo = f"""
 | Campo | Informa\u00e7\u00e3o |
 |-------|------------|
 | Nome | {nome_completo} |
@@ -819,7 +802,8 @@ elif aba == "Cadastro de Motorista":
 | Valor/km desejado | R$ {valor_km_desejado:.2f} |
 | Disponibilidade | {', '.join(disponibilidade)} |
 | Hor\u00e1rio | {horario} |
-""")
+"""
+            st.markdown(resumo)
 
 
 # ============================================================
@@ -830,4 +814,3 @@ st.markdown("""
     Transfelog App \u00b7 Grupo Transfelog do Brasil \u00b7 S\u00e3o Paulo e ABC Paulista
 </div>
 """, unsafe_allow_html=True)
-
