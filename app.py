@@ -682,3 +682,5 @@ st.markdown("""
     Transfelog App \u00b7 Grupo Transfelog do Brasil \u00b7 S\u00e3o Paulo e ABC Paulista
 </div>
 """, unsafe_allow_html=True)
+
+st.image("ChatGPT Image Jun 20, 2026, 04_01_07 PM(1).png", width=60)
