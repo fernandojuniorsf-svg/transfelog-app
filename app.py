@@ -1,8 +1,16 @@
+```python
 import streamlit as st
 from datetime import datetime
 import base64
 import os
 import urllib.parse
+
+try:
+    import gspread
+    from google.oauth2.service_account import Credentials
+    GSHEETS_DISPONIVEL = True
+except ImportError:
+    GSHEETS_DISPONIVEL = False
 
 st.set_page_config(
     page_title="Transfelog App",
@@ -20,9 +28,9 @@ st.markdown("""
     }
     .app-header {
         background: linear-gradient(135deg, #1a2332 0%, #243447 40%, #4A9BA8 100%);
-        padding: 2.5rem 2rem;
+        padding: 3rem 2rem;
         border-radius: 20px;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
         box-shadow: 0 12px 40px rgba(74, 155, 168, 0.2);
         display: flex;
         flex-direction: column;
@@ -30,7 +38,7 @@ st.markdown("""
         text-align: center;
     }
     .app-header img {
-        height: 220px;
+        height: 280px;
         border-radius: 0;
         object-fit: contain;
         margin-bottom: 0;
@@ -239,6 +247,49 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+
+def conectar_gsheets():
+    if not GSHEETS_DISPONIVEL:
+        return None
+    try:
+        creds_dict = dict(st.secrets["gcp_service_account"])
+        scopes = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
+        credentials = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+        client = gspread.authorize(credentials)
+        return client
+    except Exception:
+        return None
+
+
+def salvar_motorista_gsheets(dados):
+    client = conectar_gsheets()
+    if client is None:
+        return False
+    try:
+        planilha = client.open("Transfelog - Motoristas")
+        aba = planilha.sheet1
+        aba.append_row(dados)
+        return True
+    except Exception:
+        return False
+
+
+def salvar_cotacao_gsheets(dados):
+    client = conectar_gsheets()
+    if client is None:
+        return False
+    try:
+        planilha = client.open("Transfelog - Cotacoes")
+        aba = planilha.sheet1
+        aba.append_row(dados)
+        return True
+    except Exception:
+        return False
+
+
 WHATSAPP_TRANSFELOG = "5511978178226"
 
 CODIGOS_TIER = {
@@ -248,9 +299,9 @@ CODIGOS_TIER = {
 }
 
 CUPONS_DESCONTO = {
-    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "2026-07-31"},
+    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
     "FRETE20": {"desconto_pct": 20, "descricao": "20% de desconto", "validade": "2026-07-15"},
-    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% inaugura\u00e7\u00e3o", "validade": "2026-08-31"},
+    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de inaugura\u00e7\u00e3o", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
 }
 
 FATOR_CUBAGEM = 300
@@ -413,7 +464,9 @@ def formato_veiculo(v):
     return texto
 
 
-# HEADER - LOGO GRANDE SEM TEXTO
+# ============================================================
+# HEADER - LOGO GRANDE SEPARADA DO MENU
+# ============================================================
 LOGO_FILENAME = "ChatGPT Image Jun 20, 2026, 07_39_44 PM.png"
 logo_html = ""
 if os.path.exists(LOGO_FILENAME):
@@ -427,12 +480,17 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+# ============================================================
+# MENU - SEPARADO DO HEADER
+# ============================================================
+st.markdown("")
 aba = st.radio(
     "Menu",
     ["Cota\u00e7\u00e3o de Frete", "Cadastro de Motorista"],
     horizontal=True,
     label_visibility="collapsed"
 )
+st.markdown("")
 
 if aba == "Cota\u00e7\u00e3o de Frete":
 
@@ -547,6 +605,22 @@ if aba == "Cota\u00e7\u00e3o de Frete":
                 adicional_selecionado=adicional,
                 cupom_dados=cupom_dados
             )
+
+            dados_cotacao = [
+                datetime.now().strftime("%d/%m/%Y %H:%M"),
+                tier_ativo,
+                veiculo_selecionado,
+                tipo_carga,
+                f"{km_ida:.0f}",
+                f"{resultado['km_cobrado']:.0f}",
+                str(n_paradas),
+                adicional,
+                "Sim" if protecao_ativa else "N\u00e3o",
+                f"{valor_mercadoria:.2f}",
+                cupom_input if cupom_dados else "",
+                formatar_brl(resultado['total']),
+            ]
+            salvar_cotacao_gsheets(dados_cotacao)
 
             st.markdown(f'<div class="result-card"><div class="result-label">VALOR DA COTA\u00c7\u00c3O</div><div class="result-total">{formatar_brl(resultado["total"])}</div></div>', unsafe_allow_html=True)
 
@@ -674,7 +748,31 @@ elif aba == "Cadastro de Motorista":
         elif len(disponibilidade) == 0:
             st.error("Selecione ao menos um dia de disponibilidade.")
         else:
-            st.markdown(f'<div class="success-box">Cadastro enviado com sucesso! Documentos em an\u00e1lise.<br>Retorno em at\u00e9 48h no WhatsApp: <b>{whatsapp_motorista}</b></div>', unsafe_allow_html=True)
+            dados_motorista = [
+                datetime.now().strftime("%d/%m/%Y %H:%M"),
+                nome_completo,
+                cep_motorista,
+                endereco,
+                cidade_motorista,
+                estado_motorista,
+                telefone,
+                whatsapp_motorista,
+                email_motorista,
+                veiculo_motorista,
+                placa,
+                str(capacidade_peso),
+                str(capacidade_volume),
+                f"R$ {valor_km_desejado:.2f}",
+                ", ".join(disponibilidade),
+                horario,
+                "Pendente",
+            ]
+            sucesso_sheets = salvar_motorista_gsheets(dados_motorista)
+
+            if sucesso_sheets:
+                st.markdown(f'<div class="success-box">Cadastro enviado com sucesso! Documentos em an\u00e1lise.<br>Retorno em at\u00e9 48h no WhatsApp: <b>{whatsapp_motorista}</b></div>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div class="success-box">Cadastro registrado! Entraremos em contato pelo WhatsApp: <b>{whatsapp_motorista}</b></div>', unsafe_allow_html=True)
 
             st.markdown("")
             st.caption("Resumo:")
