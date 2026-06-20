@@ -30,21 +30,10 @@ st.markdown("""
         text-align: center;
     }
     .app-header img {
-        height: 90px;
-        border-radius: 14px;
+        height: 150px;
+        border-radius: 0;
         object-fit: contain;
-        margin-bottom: 0.8rem;
-    }
-    .app-header h1 {
-        color: #ffffff;
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin: 0;
-    }
-    .app-header p {
-        color: rgba(255,255,255,0.6);
-        font-size: 0.8rem;
-        margin: 0.3rem 0 0 0;
+        margin-bottom: 0;
     }
     .section-label {
         color: #1a2332;
@@ -302,24 +291,24 @@ PRECOS = {
 }
 
 VEICULOS_INFO = {
-    "Moto": {"peso": "20 kg", "volume": u"0,1 m\u00b3", "pallets": "", "desc": "Documentos e pequenos volumes"},
-    "Carro": {"peso": "300 kg", "volume": u"1 m\u00b3", "pallets": "", "desc": u"Urg\u00eancias e encomendas leves"},
-    "Fiorino": {"peso": "600 kg", "volume": u"3,5 m\u00b3", "pallets": "", "desc": "Entregas urbanas leves"},
-    "Van": {"peso": "1.500 kg", "volume": u"12 m\u00b3", "pallets": "6", "desc": u"E-commerce e cargas m\u00e9dias"},
-    "VUC": {"peso": "2.000 kg", "volume": u"18 m\u00b3", "pallets": "8", "desc": "Carga urbana (entra na ZMRC)"},
-    "3/4": {"peso": "3.500 kg", "volume": u"25 m\u00b3", "pallets": "10", "desc": u"Distribui\u00e7\u00f5es regionais"},
-    "Toco": {"peso": "7.000 kg", "volume": u"35 m\u00b3", "pallets": "12-14", "desc": u"Eixo simples, carga m\u00e9dia-pesada"},
-    "Truck": {"peso": "14.000 kg", "volume": u"45 m\u00b3", "pallets": "16-18", "desc": "Eixo duplo, grandes volumes"},
-    "Carreta": {"peso": "27.000 kg", "volume": u"90 m\u00b3", "pallets": "24-28", "desc": "Carga completa pesada"},
+    "Moto": {"peso": "20 kg", "volume": "0,1 m\u00b3", "pallets": "", "desc": "Documentos e pequenos volumes"},
+    "Carro": {"peso": "300 kg", "volume": "1 m\u00b3", "pallets": "", "desc": "Urg\u00eancias e encomendas leves"},
+    "Fiorino": {"peso": "600 kg", "volume": "3,5 m\u00b3", "pallets": "", "desc": "Entregas urbanas leves"},
+    "Van": {"peso": "1.500 kg", "volume": "12 m\u00b3", "pallets": "6", "desc": "E-commerce e cargas m\u00e9dias"},
+    "VUC": {"peso": "2.000 kg", "volume": "18 m\u00b3", "pallets": "8", "desc": "Carga urbana (entra na ZMRC)"},
+    "3/4": {"peso": "3.500 kg", "volume": "25 m\u00b3", "pallets": "10", "desc": "Distribui\u00e7\u00f5es regionais"},
+    "Toco": {"peso": "7.000 kg", "volume": "35 m\u00b3", "pallets": "12-14", "desc": "Eixo simples, carga m\u00e9dia-pesada"},
+    "Truck": {"peso": "14.000 kg", "volume": "45 m\u00b3", "pallets": "16-18", "desc": "Eixo duplo, grandes volumes"},
+    "Carreta": {"peso": "27.000 kg", "volume": "90 m\u00b3", "pallets": "24-28", "desc": "Carga completa pesada"},
 }
 
 ADICIONAIS = {
-    u"Hor\u00e1rio comercial": 0,
-    u"Hor\u00e1rio de pico": 0.15,
-    u"Per\u00edodo noturno": 0.25,
-    u"S\u00e1bado": 0.20,
+    "Hor\u00e1rio comercial": 0,
+    "Hor\u00e1rio de pico": 0.15,
+    "Per\u00edodo noturno": 0.25,
+    "S\u00e1bado": 0.20,
     "Domingo ou feriado": 0.30,
-    u"Zona de restri\u00e7\u00e3o (ZMRC)": 0.10,
+    "Zona de restri\u00e7\u00e3o (ZMRC)": 0.10,
 }
 
 PROTECAO_MINIMO = 5.00
@@ -423,7 +412,7 @@ def formato_veiculo(v):
     return texto
 
 
-# HEADER
+# HEADER - LOGO GRANDE SEM TEXTO
 LOGO_FILENAME = "ChatGPT Image Jun 20, 2026, 04_01_07 PM(1).png"
 logo_html = ""
 if os.path.exists(LOGO_FILENAME):
@@ -434,32 +423,30 @@ if os.path.exists(LOGO_FILENAME):
 st.markdown(f"""
 <div class="app-header">
     {logo_html}
-    <h1>TRANSFELOG</h1>
-    <p>Aplicativo do Grupo Transfelog do Brasil</p>
 </div>
 """, unsafe_allow_html=True)
 
 aba = st.radio(
     "Menu",
-    [u"Cota\u00e7\u00e3o de Frete", "Cadastro de Motorista"],
+    ["Cota\u00e7\u00e3o de Frete", "Cadastro de Motorista"],
     horizontal=True,
     label_visibility="collapsed"
 )
 
-if aba == u"Cota\u00e7\u00e3o de Frete":
+if aba == "Cota\u00e7\u00e3o de Frete":
 
     st.markdown('<div class="section-label">Acesso</div>', unsafe_allow_html=True)
     codigo_cliente = st.text_input(
-        u"C\u00f3digo",
+        "C\u00f3digo",
         type="password",
-        placeholder=u"Insira seu c\u00f3digo de acesso",
+        placeholder="Insira seu c\u00f3digo de acesso",
         label_visibility="collapsed"
     )
 
     tier_ativo = identificar_tier(codigo_cliente) if codigo_cliente else None
 
     if codigo_cliente and tier_ativo is None:
-        st.error(u"C\u00f3digo inv\u00e1lido. Verifique com seu consultor.")
+        st.error("C\u00f3digo inv\u00e1lido. Verifique com seu consultor.")
     elif tier_ativo:
         badge_class = f"tier-badge-{tier_ativo.lower()}"
         st.markdown(f'<span class="{badge_class}">{tier_ativo}</span>', unsafe_allow_html=True)
@@ -474,9 +461,9 @@ if aba == u"Cota\u00e7\u00e3o de Frete":
             if cupom_dados:
                 st.markdown(f'<span class="cupom-badge">{cupom_dados["descricao"]}</span>', unsafe_allow_html=True)
             else:
-                st.caption(u"Cupom inv\u00e1lido ou expirado.")
+                st.caption("Cupom inv\u00e1lido ou expirado.")
 
-        st.markdown(u'<div class="section-label">Ve\u00edculo</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-label">Ve\u00edculo</div>', unsafe_allow_html=True)
         veiculo_selecionado = st.selectbox(
             "Selecione",
             list(VEICULOS_INFO.keys()),
@@ -492,16 +479,16 @@ if aba == u"Cota\u00e7\u00e3o de Frete":
         with col2:
             percentual_complemento = 100
             if tipo_carga == "Complemento":
-                percentual_complemento = st.slider(u"Espa\u00e7o utilizado (%)", 40, 100, 60)
+                percentual_complemento = st.slider("Espa\u00e7o utilizado (%)", 40, 100, 60)
             else:
-                st.caption(u"Ve\u00edculo exclusivo")
+                st.caption("Ve\u00edculo exclusivo")
 
         st.markdown('<div class="section-label">Peso e volume da carga</div>', unsafe_allow_html=True)
         col_peso, col_vol = st.columns(2)
         with col_peso:
             peso_real = st.number_input("Peso real (kg)", min_value=1.0, value=500.0, step=50.0)
         with col_vol:
-            volume_carga = st.number_input(u"Volume (m\u00b3)", min_value=0.1, value=2.0, step=0.5)
+            volume_carga = st.number_input("Volume (m\u00b3)", min_value=0.1, value=2.0, step=0.5)
 
         peso_taxado, peso_cubado = calcular_peso_taxado(peso_real, volume_carga)
         if peso_cubado > peso_real:
@@ -512,7 +499,7 @@ if aba == u"Cota\u00e7\u00e3o de Frete":
         st.markdown('<div class="section-label">Percurso</div>', unsafe_allow_html=True)
         col_km, col_paradas = st.columns(2)
         with col_km:
-            km_ida = st.number_input(u"Dist\u00e2ncia ida (km)", min_value=1.0, max_value=1000.0, value=25.0, step=1.0)
+            km_ida = st.number_input("Dist\u00e2ncia ida (km)", min_value=1.0, max_value=1000.0, value=25.0, step=1.0)
         with col_paradas:
             n_paradas = st.number_input("Pontos de entrega", min_value=1, max_value=20, value=3, step=1)
 
@@ -523,12 +510,12 @@ if aba == u"Cota\u00e7\u00e3o de Frete":
         else:
             st.caption(f"KM cobrado: {km_cobrado:.0f} km (somente ida)")
 
-        st.markdown(u'<span class="locked-badge">Roteirizador autom\u00e1tico \u2014 dispon\u00edvel em breve</span>', unsafe_allow_html=True)
+        st.markdown('<span class="locked-badge">Roteirizador autom\u00e1tico dispon\u00edvel em breve</span>', unsafe_allow_html=True)
 
-        st.markdown(u'<div class="section-label">Per\u00edodo</div>', unsafe_allow_html=True)
-        adicional = st.selectbox(u"Per\u00edodo", list(ADICIONAIS.keys()), label_visibility="collapsed")
+        st.markdown('<div class="section-label">Per\u00edodo</div>', unsafe_allow_html=True)
+        adicional = st.selectbox("Per\u00edodo", list(ADICIONAIS.keys()), label_visibility="collapsed")
 
-        st.markdown(u'<div class="section-label">Prote\u00e7\u00e3o de carga</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-label">Prote\u00e7\u00e3o de carga</div>', unsafe_allow_html=True)
         col_p1, col_p2 = st.columns([1, 2])
         with col_p1:
             protecao_ativa = st.toggle("Ativar", value=True)
@@ -541,10 +528,10 @@ if aba == u"Cota\u00e7\u00e3o de Frete":
             vp = calcular_protecao(valor_mercadoria, tier_ativo)
             st.caption(f"Prote\u00e7\u00e3o: {formatar_brl(vp)}")
 
-        st.markdown(u'<div class="info-box">Ped\u00e1gio, taxas de acesso e estadias n\u00e3o inclusos. Cobrados \u00e0 parte conforme percurso.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="info-box">Ped\u00e1gio, taxas de acesso e estadias n\u00e3o inclusos. Cobrados \u00e0 parte conforme percurso.</div>', unsafe_allow_html=True)
 
         st.markdown("")
-        calcular = st.button(u"CALCULAR COTA\u00c7\u00c3O", use_container_width=True)
+        calcular = st.button("CALCULAR COTA\u00c7\u00c3O", use_container_width=True)
 
         if calcular:
             resultado = calcular_cotacao(
@@ -560,13 +547,10 @@ if aba == u"Cota\u00e7\u00e3o de Frete":
                 cupom_dados=cupom_dados
             )
 
-            # RESULTADO
             st.markdown(f'<div class="result-card"><div class="result-label">VALOR DA COTA\u00c7\u00c3O</div><div class="result-total">{formatar_brl(resultado["total"])}</div></div>', unsafe_allow_html=True)
 
-            # KPIs
             st.markdown(f'<div class="kpi-row"><div class="kpi-item"><div class="kpi-item-label">KM cobrado</div><div class="kpi-item-value">{resultado["km_cobrado"]:.0f} km</div></div><div class="kpi-item"><div class="kpi-item-label">Paradas</div><div class="kpi-item-value">{n_paradas}</div></div><div class="kpi-item"><div class="kpi-item-label">Ve\u00edculo</div><div class="kpi-item-value">{veiculo_selecionado}</div></div></div>', unsafe_allow_html=True)
 
-            # DETALHAMENTO
             preco_km_unit = PRECOS[tier_ativo][veiculo_selecionado]['valor_km']
 
             st.markdown('<div class="breakdown-card">', unsafe_allow_html=True)
@@ -586,56 +570,64 @@ if aba == u"Cota\u00e7\u00e3o de Frete":
             st.markdown(f'<div class="breakdown-total"><span class="breakdown-total-label">Total</span><span class="breakdown-total-value">{formatar_brl(resultado["total"])}</span></div>', unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
-            # WHATSAPP
             msg_whatsapp = f"Ol\u00e1! Gostaria de solicitar um frete.\n\n*Cota\u00e7\u00e3o Transfelog App*\nVe\u00edculo: {veiculo_selecionado}\nDist\u00e2ncia: {km_ida} km (cobrado: {resultado['km_cobrado']:.0f} km)\nPontos de entrega: {n_paradas}\nPer\u00edodo: {adicional}\nTipo: {tipo_carga}\n{'Prote\u00e7\u00e3o de carga: Inclusa' if protecao_ativa else 'Prote\u00e7\u00e3o: N\u00e3o inclusa'}\n\n*TOTAL: {formatar_brl(resultado['total'])}*\nPed\u00e1gio e taxas cobrados \u00e0 parte.\n\nGostaria de confirmar esta solicita\u00e7\u00e3o."
 
             url_whatsapp = f"https://wa.me/{WHATSAPP_TRANSFELOG}?text={urllib.parse.quote(msg_whatsapp)}"
 
             st.markdown(f'<a href="{url_whatsapp}" target="_blank" class="whatsapp-btn">SOLICITAR FRETE VIA WHATSAPP</a>', unsafe_allow_html=True)
 
-            # COPIAR
             st.markdown("")
-            st.caption(u"Ou copie a cota\u00e7\u00e3o:")
+            st.caption("Ou copie a cota\u00e7\u00e3o:")
             msg_copiar = f"*TRANSFELOG | Cota\u00e7\u00e3o de Frete*\n\nVe\u00edculo: {veiculo_selecionado}\nDist\u00e2ncia: {km_ida} km (cobrado: {resultado['km_cobrado']:.0f} km)\nPontos de entrega: {n_paradas}\nPer\u00edodo: {adicional}\n{'Prote\u00e7\u00e3o de carga: Inclusa' if protecao_ativa else ''}\n{'Cupom: ' + cupom_dados['descricao'] if cupom_dados else ''}\n\n*TOTAL: {formatar_brl(resultado['total'])}*\nPed\u00e1gio e taxas cobrados \u00e0 parte.\n\ntransfelog.streamlit.app"
 
             st.text_area("Copiar", msg_copiar, height=200, label_visibility="collapsed")
 
     else:
         if not codigo_cliente:
-            st.caption(u"Insira seu c\u00f3digo de acesso para calcular sua cota\u00e7\u00e3o.")
+            st.caption("Insira seu c\u00f3digo de acesso para calcular sua cota\u00e7\u00e3o.")
 
 
 elif aba == "Cadastro de Motorista":
 
-    st.markdown(u'<div class="section-label">Cadastro para aprova\u00e7\u00e3o</div>', unsafe_allow_html=True)
-    st.caption(u"Preencha todos os campos e envie seus documentos. Ap\u00f3s an\u00e1lise, voc\u00ea receber\u00e1 seu acesso em at\u00e9 48 horas.")
+    st.markdown('<div class="section-label">Cadastro para aprova\u00e7\u00e3o</div>', unsafe_allow_html=True)
+    st.caption("Preencha todos os campos e envie seus documentos. Ap\u00f3s an\u00e1lise, voc\u00ea receber\u00e1 seu acesso em at\u00e9 48 horas.")
 
     st.markdown("")
 
     nome_completo = st.text_input("Nome completo")
-    endereco = st.text_input(u"Endere\u00e7o completo (rua, n\u00famero, bairro, cidade, estado)")
+
+    st.markdown('<div class="section-label">Endere\u00e7o</div>', unsafe_allow_html=True)
+    cep_motorista = st.text_input("CEP", placeholder="Ex: 09720-000")
+    endereco = st.text_input("Rua, n\u00famero e bairro")
+    col_cid, col_est = st.columns(2)
+    with col_cid:
+        cidade_motorista = st.text_input("Cidade")
+    with col_est:
+        estado_motorista = st.text_input("Estado", placeholder="Ex: SP")
+
+    st.markdown('<div class="section-label">Contato</div>', unsafe_allow_html=True)
     telefone = st.text_input("Telefone")
     whatsapp_motorista = st.text_input("WhatsApp", placeholder="Ex: 11 98765-4321")
     email_motorista = st.text_input("E-mail")
 
-    st.markdown(u'<div class="section-label">Ve\u00edculo</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">Ve\u00edculo</div>', unsafe_allow_html=True)
 
     col_v1, col_v2 = st.columns(2)
     with col_v1:
         veiculo_motorista = st.selectbox(
-            u"Tipo de ve\u00edculo",
+            "Tipo de ve\u00edculo",
             list(VEICULOS_INFO.keys()),
             format_func=lambda v: f"{v} ({VEICULOS_INFO[v]['peso']})",
             key="veiculo_mot"
         )
     with col_v2:
-        placa = st.text_input(u"Placa do ve\u00edculo")
+        placa = st.text_input("Placa do ve\u00edculo")
 
     col_cap1, col_cap2 = st.columns(2)
     with col_cap1:
         capacidade_peso = st.number_input("Capacidade de peso (kg)", min_value=1, value=2000, step=100)
     with col_cap2:
-        capacidade_volume = st.number_input(u"Capacidade de volume (m\u00b3)", min_value=1.0, value=18.0, step=1.0)
+        capacidade_volume = st.number_input("Capacidade de volume (m\u00b3)", min_value=1.0, value=18.0, step=1.0)
 
     st.markdown('<div class="section-label">Valor desejado por km</div>', unsafe_allow_html=True)
     valor_km_desejado = st.number_input(
@@ -644,38 +636,38 @@ elif aba == "Cadastro de Motorista":
         max_value=20.0,
         value=5.00,
         step=0.50,
-        help=u"Sujeito \u00e0 aprova\u00e7\u00e3o conforme tabela vigente."
+        help="Sujeito \u00e0 aprova\u00e7\u00e3o conforme tabela vigente."
     )
 
     st.markdown('<div class="section-label">Disponibilidade</div>', unsafe_allow_html=True)
     disponibilidade = st.multiselect(
-        u"Dias dispon\u00edveis",
-        ["Segunda", u"Ter\u00e7a", "Quarta", "Quinta", "Sexta", u"S\u00e1bado", "Domingo"],
-        default=["Segunda", u"Ter\u00e7a", "Quarta", "Quinta", "Sexta"]
+        "Dias dispon\u00edveis",
+        ["Segunda", "Ter\u00e7a", "Quarta", "Quinta", "Sexta", "S\u00e1bado", "Domingo"],
+        default=["Segunda", "Ter\u00e7a", "Quarta", "Quinta", "Sexta"]
     )
 
     horario = st.selectbox(
-        u"Hor\u00e1rio de prefer\u00eancia",
-        [u"Integral (08h \u00e0s 20h)", u"Manh\u00e3 (06h \u00e0s 14h)", u"Tarde (12h \u00e0s 20h)", u"Noturno (18h \u00e0s 06h)", u"Flex\u00edvel"]
+        "Hor\u00e1rio de prefer\u00eancia",
+        ["Integral (08h \u00e0s 20h)", "Manh\u00e3 (06h \u00e0s 14h)", "Tarde (12h \u00e0s 20h)", "Noturno (18h \u00e0s 06h)", "Flex\u00edvel"]
     )
 
     st.markdown('<div class="section-label">Documentos</div>', unsafe_allow_html=True)
-    st.caption(u"Envie fotos leg\u00edveis. Formatos: PNG, JPG ou PDF.")
+    st.caption("Envie fotos leg\u00edveis. Formatos: PNG, JPG ou PDF.")
 
     cnh_upload = st.file_uploader("CNH (frente e verso)", type=["png", "jpg", "jpeg", "pdf"], key="cnh")
-    doc_veiculo_upload = st.file_uploader(u"Documento do ve\u00edculo (CRLV)", type=["png", "jpg", "jpeg", "pdf"], key="doc_veic")
-    foto_veiculo = st.file_uploader(u"Foto do ve\u00edculo (opcional)", type=["png", "jpg", "jpeg"], key="foto_veic")
+    doc_veiculo_upload = st.file_uploader("Documento do ve\u00edculo (CRLV)", type=["png", "jpg", "jpeg", "pdf"], key="doc_veic")
+    foto_veiculo = st.file_uploader("Foto do ve\u00edculo (opcional)", type=["png", "jpg", "jpeg"], key="foto_veic")
 
     st.markdown("")
-    aceite_termos = st.checkbox(u"Declaro que as informa\u00e7\u00f5es s\u00e3o verdadeiras e aceito os termos de parceria.")
+    aceite_termos = st.checkbox("Declaro que as informa\u00e7\u00f5es s\u00e3o verdadeiras e aceito os termos de parceria.")
 
     st.markdown("")
     enviar = st.button("ENVIAR CADASTRO", use_container_width=True)
 
     if enviar:
-        campos_obrigatorios = [nome_completo, endereco, telefone, whatsapp_motorista, email_motorista, placa, cnh_upload, doc_veiculo_upload]
+        campos_obrigatorios = [nome_completo, cep_motorista, endereco, cidade_motorista, estado_motorista, telefone, whatsapp_motorista, email_motorista, placa, cnh_upload, doc_veiculo_upload]
         if not all(campos_obrigatorios):
-            st.error(u"Preencha todos os campos obrigat\u00f3rios e anexe CNH + CRLV.")
+            st.error("Preencha todos os campos obrigat\u00f3rios e anexe CNH + CRLV.")
         elif not aceite_termos:
             st.error("Aceite os termos para enviar.")
         elif len(disponibilidade) == 0:
@@ -690,6 +682,8 @@ elif aba == "Cadastro de Motorista":
 |-------|------------|
 | Nome | {nome_completo} |
 | WhatsApp | {whatsapp_motorista} |
+| CEP | {cep_motorista} |
+| Endere\u00e7o | {endereco}, {cidade_motorista} - {estado_motorista} |
 | Ve\u00edculo | {veiculo_motorista} |
 | Placa | {placa} |
 | Capacidade | {capacidade_peso} kg / {capacidade_volume} m\u00b3 |
