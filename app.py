@@ -2,195 +2,267 @@ import streamlit as st
 from datetime import datetime
 
 # ============================================================
-# CONFIGURACAO DA PAGINA
+# CONFIGURAÇÃO DA PÁGINA
 # ============================================================
 st.set_page_config(
     page_title="Transfelog App",
     page_icon="T",
-    layout="wide",
+    layout="centered",
     initial_sidebar_state="collapsed"
 )
 
 # ============================================================
-# CSS CUSTOMIZADO - DESIGN MODERNO
+# CSS - DESIGN MODERNO, CLEAN, GRADIENTES
 # ============================================================
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
     .stApp {
-        background: linear-gradient(180deg, #f8fafb 0%, #eef2f5 100%);
+        background: linear-gradient(160deg, #f0f4f7 0%, #e8eef3 50%, #f5f8fa 100%);
+        font-family: 'Inter', sans-serif;
     }
-    .header-container {
-        background: linear-gradient(135deg, #2d3436 0%, #1a1e21 50%, #4A9BA8 100%);
-        padding: 2rem 2.5rem;
-        border-radius: 16px;
+
+    /* Header */
+    .app-header {
+        background: linear-gradient(135deg, #1a2332 0%, #243447 40%, #4A9BA8 100%);
+        padding: 1.8rem 2rem;
+        border-radius: 20px;
         margin-bottom: 2rem;
-        box-shadow: 0 8px 32px rgba(74, 155, 168, 0.15);
+        box-shadow: 0 12px 40px rgba(74, 155, 168, 0.2);
         display: flex;
         align-items: center;
-        gap: 1.5rem;
+        gap: 1.2rem;
     }
-    .header-logo {
-        width: 60px;
-        height: 60px;
-        border-radius: 12px;
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
     }
-    .header-text {
+    .logo-mark {
+        width: 48px;
+        height: 48px;
+        position: relative;
+    }
+    .logo-t {
+        width: 24px;
+        height: 28px;
+        background: linear-gradient(135deg, #b8c4cc 0%, #8a9baa 100%);
+        transform: skewX(-12deg);
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        border-radius: 3px;
+    }
+    .logo-f {
+        width: 24px;
+        height: 28px;
+        background: linear-gradient(135deg, #4A9BA8 0%, #3a7f8a 100%);
+        transform: skewX(-12deg);
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        border-radius: 3px;
+    }
+    .header-info {
         flex: 1;
     }
-    .header-title {
+    .header-info h1 {
         color: #ffffff;
-        font-size: 2rem;
+        font-size: 1.6rem;
         font-weight: 700;
         margin: 0;
-        letter-spacing: -0.5px;
+        letter-spacing: -0.3px;
     }
-    .header-subtitle {
-        color: rgba(255,255,255,0.7);
-        font-size: 0.9rem;
-        margin-top: 0.3rem;
+    .header-info p {
+        color: rgba(255,255,255,0.6);
+        font-size: 0.8rem;
+        margin: 0.2rem 0 0 0;
         font-weight: 400;
     }
-    .kpi-card {
-        background: #ffffff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        border-left: 4px solid #4A9BA8;
-        transition: transform 0.2s ease;
-    }
-    .kpi-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 20px rgba(74, 155, 168, 0.15);
-    }
-    .kpi-label {
-        color: #6b7280;
-        font-size: 0.8rem;
+
+    /* Seções */
+    .section-label {
+        color: #1a2332;
+        font-size: 0.85rem;
+        font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.3rem;
+        letter-spacing: 0.8px;
+        margin: 2rem 0 0.8rem 0;
+        padding-left: 0.5rem;
+        border-left: 3px solid #4A9BA8;
     }
-    .kpi-value {
-        color: #1a1e21;
-        font-size: 1.8rem;
-        font-weight: 700;
-    }
-    .kpi-value-highlight {
-        color: #4A9BA8;
-        font-size: 1.8rem;
-        font-weight: 700;
-    }
+
+    /* Card de resultado */
     .result-card {
-        background: linear-gradient(135deg, #ffffff 0%, #f0fafb 100%);
-        border-radius: 16px;
-        padding: 2rem;
-        box-shadow: 0 4px 24px rgba(74, 155, 168, 0.12);
-        border: 1px solid rgba(74, 155, 168, 0.2);
+        background: linear-gradient(135deg, #ffffff 0%, #f4fafb 100%);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(74, 155, 168, 0.1);
+        border: 1px solid rgba(74, 155, 168, 0.15);
         margin: 1.5rem 0;
-    }
-    .result-total {
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: #4A9BA8;
-        margin: 0.5rem 0;
+        text-align: center;
     }
     .result-label {
         color: #6b7280;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+    .result-total {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #4A9BA8 0%, #2d7a85 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0.5rem 0;
+    }
+
+    /* KPI cards */
+    .kpi-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+    .kpi-item {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 1.2rem;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        border: 1px solid #f0f0f0;
+    }
+    .kpi-item-label {
+        color: #9ca3af;
+        font-size: 0.7rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        font-weight: 500;
     }
-    .section-title {
-        color: #1a1e21;
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin: 1.5rem 0 0.8rem 0;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #4A9BA8;
-        display: inline-block;
+    .kpi-item-value {
+        color: #1a2332;
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-top: 0.3rem;
     }
-    .detail-row {
+
+    /* Detalhamento */
+    .breakdown-card {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        margin: 1rem 0;
+    }
+    .breakdown-row {
         display: flex;
         justify-content: space-between;
-        padding: 0.6rem 0;
-        border-bottom: 1px solid #f3f4f6;
+        align-items: center;
+        padding: 0.7rem 0;
+        border-bottom: 1px solid #f5f5f5;
     }
-    .detail-label {
-        color: #6b7280;
-        font-size: 0.9rem;
+    .breakdown-row:last-child {
+        border-bottom: none;
     }
-    .detail-value {
-        color: #1a1e21;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-    .route-step {
-        background: #ffffff;
-        border-radius: 8px;
-        padding: 0.8rem 1rem;
-        margin: 0.5rem 0;
-        border-left: 3px solid #4A9BA8;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-    }
-    .route-number {
-        color: #4A9BA8;
-        font-weight: 700;
+    .breakdown-name {
+        color: #4b5563;
         font-size: 0.85rem;
+        font-weight: 400;
     }
-    .route-address {
-        color: #1a1e21;
+    .breakdown-value {
+        color: #1a2332;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    .breakdown-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0 0 0;
+        margin-top: 0.5rem;
+        border-top: 2px solid #4A9BA8;
+    }
+    .breakdown-total-label {
+        color: #1a2332;
         font-size: 0.9rem;
-        margin-top: 0.2rem;
+        font-weight: 700;
     }
+    .breakdown-total-value {
+        color: #4A9BA8;
+        font-size: 1.2rem;
+        font-weight: 800;
+    }
+
+    /* Locked badge */
+    .locked-badge {
+        background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+        color: #9ca3af;
+        padding: 0.6rem 1rem;
+        border-radius: 10px;
+        font-size: 0.78rem;
+        font-weight: 500;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+
+    /* Botão principal */
     .stButton > button {
-        background: linear-gradient(135deg, #4A9BA8 0%, #3d8a96 100%);
+        background: linear-gradient(135deg, #4A9BA8 0%, #3a7f8a 100%);
         color: white;
         border: none;
-        border-radius: 10px;
-        padding: 0.7rem 2rem;
+        border-radius: 14px;
+        padding: 0.9rem 2.5rem;
         font-weight: 600;
-        font-size: 0.95rem;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 12px rgba(74, 155, 168, 0.3);
+        font-size: 1rem;
+        letter-spacing: 0.3px;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(74, 155, 168, 0.3);
     }
     .stButton > button:hover {
         background: linear-gradient(135deg, #3d8a96 0%, #2d7580 100%);
-        box-shadow: 0 6px 20px rgba(74, 155, 168, 0.4);
-        transform: translateY(-1px);
+        box-shadow: 0 8px 28px rgba(74, 155, 168, 0.4);
+        transform: translateY(-2px);
     }
-    .footer {
+
+    /* Footer */
+    .app-footer {
         text-align: center;
-        color: #9ca3af;
-        font-size: 0.75rem;
+        color: #b0b8c4;
+        font-size: 0.72rem;
         margin-top: 3rem;
         padding: 1.5rem;
-        border-top: 1px solid #e5e7eb;
+        border-top: 1px solid #e8eef3;
+        font-weight: 400;
     }
-    .locked-badge {
-        background: #f3f4f6;
-        color: #9ca3af;
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        display: inline-block;
-    }
+
+    /* Esconder defaults do Streamlit */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+
+    /* Inputs */
     .stSelectbox > div > div {
-        border-radius: 10px;
+        border-radius: 12px;
+        border-color: #e5e7eb;
     }
     .stTextInput > div > div > input {
-        border-radius: 10px;
+        border-radius: 12px;
     }
     .stNumberInput > div > div > input {
-        border-radius: 10px;
+        border-radius: 12px;
+    }
+
+    /* Toggle */
+    div[data-testid="stToggle"] label span {
+        font-weight: 500;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ============================================================
-# DADOS DE CONFIGURACAO (VARIAVEIS EDITAVEIS)
+# DADOS DE CONFIGURAÇÃO
 # ============================================================
 
 PRECOS = {
@@ -227,14 +299,14 @@ PRECOS = {
 }
 
 VEICULOS_INFO = {
-    "Moto": {"capacidade": "20kg", "volume": "0.1m3"},
-    "Carro": {"capacidade": "300kg", "volume": "1.5m3"},
-    "Fiorino": {"capacidade": "600kg", "volume": "3.5m3"},
-    "Van": {"capacidade": "1.500kg", "volume": "12m3"},
-    "VUC": {"capacidade": "3.000kg", "volume": "18m3"},
-    "3/4": {"capacidade": "4.000kg", "volume": "25m3"},
-    "Truck": {"capacidade": "12.000kg", "volume": "45m3"},
-    "Carreta": {"capacidade": "25.000kg", "volume": "90m3"},
+    "Moto": {"capacidade": "20 kg", "volume": "0,1 m\u00b3", "icone": "\u2014 At\u00e9 20 kg"},
+    "Carro": {"capacidade": "300 kg", "volume": "1,5 m\u00b3", "icone": "\u2014 At\u00e9 300 kg"},
+    "Fiorino": {"capacidade": "600 kg", "volume": "3,5 m\u00b3", "icone": "\u2014 At\u00e9 600 kg"},
+    "Van": {"capacidade": "1.500 kg", "volume": "12 m\u00b3", "icone": "\u2014 At\u00e9 1.500 kg"},
+    "VUC": {"capacidade": "3.000 kg", "volume": "18 m\u00b3", "icone": "\u2014 At\u00e9 3.000 kg"},
+    "3/4": {"capacidade": "4.000 kg", "volume": "25 m\u00b3", "icone": "\u2014 At\u00e9 4.000 kg"},
+    "Truck": {"capacidade": "12.000 kg", "volume": "45 m\u00b3", "icone": "\u2014 At\u00e9 12.000 kg"},
+    "Carreta": {"capacidade": "25.000 kg", "volume": "90 m\u00b3", "icone": "\u2014 At\u00e9 25.000 kg"},
 }
 
 PROTECAO = {
@@ -247,21 +319,16 @@ PROTECAO = {
 }
 
 ADICIONAIS = {
-    "Horario comercial": 0,
-    "Pico": 0.15,
-    "Noturno": 0.25,
-    "Sabado": 0.20,
-    "Domingo ou Feriado": 0.30,
-    "Zona de restricao (ZMRC)": 0.10,
+    "Hor\u00e1rio comercial": 0,
+    "Hor\u00e1rio de pico": 0.15,
+    "Per\u00edodo noturno": 0.25,
+    "S\u00e1bado": 0.20,
+    "Domingo ou feriado": 0.30,
+    "Zona de restri\u00e7\u00e3o (ZMRC)": 0.10,
 }
 
 # ============================================================
-# URL DA LOGO (do espaco Transfelog App)
-# ============================================================
-LOGO_URL = "https://d2w9rnfcy7mm78.cloudfront.net/transfelog-logo.png"
-
-# ============================================================
-# FUNCOES DE CALCULO
+# FUNÇÕES DE CÁLCULO
 # ============================================================
 
 def calcular_taxa_pontos(n_pontos, preco_veiculo):
@@ -283,7 +350,6 @@ def calcular_protecao(valor_mercadoria, tier):
         taxa = PROTECAO["taxa_cliente_premium"]
     else:
         taxa = PROTECAO["taxa_cliente_base"]
-
     valor = valor_mercadoria * taxa
     return max(valor, PROTECAO["valor_minimo"])
 
@@ -292,11 +358,9 @@ def calcular_cotacao(veiculo, tier, km_total, n_pontos, tipo_carga,
                      percentual_complemento, protecao_ativa, valor_mercadoria,
                      adicional_selecionado):
     preco = PRECOS[tier][veiculo]
-
     taxa_base = preco["taxa_base"]
     valor_km = km_total * preco["valor_km"]
     taxa_pontos = calcular_taxa_pontos(n_pontos, preco)
-
     subtotal = taxa_base + valor_km + taxa_pontos
 
     if tipo_carga == "Complemento":
@@ -328,108 +392,101 @@ def calcular_cotacao(veiculo, tier, km_total, n_pontos, tipo_carga,
 
 
 # ============================================================
-# INTERFACE PRINCIPAL
+# HEADER COM LOGO
 # ============================================================
 
-# HEADER COM LOGO
 st.markdown("""
-<div class="header-container">
-    <div class="header-text">
-        <div class="header-title">TRANSFELOG</div>
-        <div class="header-subtitle">Grupo Transfelog do Brasil  |  Cotacao de Frete</div>
+<div class="app-header">
+    <div class="logo-mark">
+        <div class="logo-t"></div>
+        <div class="logo-f"></div>
+    </div>
+    <div class="header-info">
+        <h1>TRANSFELOG</h1>
+        <p>Grupo Transfelog do Brasil</p>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Tenta exibir logo do espaco
-try:
-    st.image("logo.png", width=80)
-except:
-    pass
-
 # ============================================================
-# SELECAO DE VEICULO
+# SELEÇÃO DE VEÍCULO (DROPDOWN CLEAN)
 # ============================================================
-st.markdown('<p class="section-title">Tipo de Veiculo</p>', unsafe_allow_html=True)
+st.markdown('<div class="section-label">Ve\u00edculo</div>', unsafe_allow_html=True)
 
-veiculo_selecionado = st.radio(
-    "Selecione o veiculo",
-    list(VEICULOS_INFO.keys()),
-    horizontal=True,
+opcoes_veiculo = [f"{v}  {VEICULOS_INFO[v]['icone']}" for v in VEICULOS_INFO.keys()]
+veiculo_idx = st.selectbox(
+    "Selecione o ve\u00edculo",
+    range(len(opcoes_veiculo)),
+    format_func=lambda x: opcoes_veiculo[x],
     label_visibility="collapsed"
 )
-
+veiculo_selecionado = list(VEICULOS_INFO.keys())[veiculo_idx]
 info_v = VEICULOS_INFO[veiculo_selecionado]
-st.caption(f"{veiculo_selecionado}  |  Capacidade: {info_v['capacidade']}  |  Volume: {info_v['volume']}")
+st.caption(f"Volume m\u00e1ximo: {info_v['volume']}")
 
 # ============================================================
-# CONFIGURACOES DA COTACAO
+# TIPO DE CARGA
 # ============================================================
-st.markdown('<p class="section-title">Detalhes da Carga</p>', unsafe_allow_html=True)
+st.markdown('<div class="section-label">Tipo de carga</div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
-
 with col1:
-    tipo_carga = st.selectbox("Tipo de Carga", ["Carga Completa", "Complemento"])
-
+    tipo_carga = st.selectbox(
+        "Tipo",
+        ["Carga Completa", "Complemento"],
+        label_visibility="collapsed"
+    )
 with col2:
     percentual_complemento = 100
     if tipo_carga == "Complemento":
-        percentual_complemento = st.slider("Percentual do espaco utilizado", 40, 100, 60)
+        percentual_complemento = st.slider("Espa\u00e7o utilizado (%)", 40, 100, 60)
     else:
-        st.write("")
-        st.caption("Veiculo exclusivo para sua carga")
+        st.caption("Ve\u00edculo exclusivo")
 
 # ============================================================
-# DISTANCIA E PARADAS (ENTRADA MANUAL)
+# DISTÂNCIA E PARADAS
 # ============================================================
-st.markdown('<p class="section-title">Distancia e Paradas</p>', unsafe_allow_html=True)
+st.markdown('<div class="section-label">Percurso</div>', unsafe_allow_html=True)
 
 col_km, col_paradas = st.columns(2)
-
 with col_km:
     km_total = st.number_input(
-        "Distancia total (km)",
+        "Dist\u00e2ncia total (km)",
         min_value=1.0,
         max_value=500.0,
         value=25.0,
-        step=1.0,
-        help="Informe a distancia total do percurso em quilometros"
+        step=1.0
     )
-
 with col_paradas:
     n_paradas = st.number_input(
-        "Quantidade de paradas",
+        "Pontos de entrega",
         min_value=1,
         max_value=20,
         value=3,
-        step=1,
-        help="Quantidade de pontos de entrega"
+        step=1
     )
 
-# Roteirizador (bloqueado)
-st.markdown('<span class="locked-badge">Roteirizador automatico — em breve</span>', unsafe_allow_html=True)
+st.markdown('<span class="locked-badge">Roteirizador autom\u00e1tico \u2014 dispon\u00edvel em breve</span>', unsafe_allow_html=True)
 
 # ============================================================
-# PERIODO DE ENTREGA
+# PERÍODO
 # ============================================================
-st.markdown('<p class="section-title">Periodo de Entrega</p>', unsafe_allow_html=True)
+st.markdown('<div class="section-label">Per\u00edodo</div>', unsafe_allow_html=True)
 
 adicional = st.selectbox(
-    "Selecione o periodo",
-    list(ADICIONAIS.keys())
+    "Per\u00edodo da entrega",
+    list(ADICIONAIS.keys()),
+    label_visibility="collapsed"
 )
 
 # ============================================================
-# PROTECAO DE CARGA
+# PROTEÇÃO DE CARGA
 # ============================================================
-st.markdown('<p class="section-title">Protecao de Carga</p>', unsafe_allow_html=True)
+st.markdown('<div class="section-label">Prote\u00e7\u00e3o de carga</div>', unsafe_allow_html=True)
 
 col_p1, col_p2 = st.columns([1, 2])
-
 with col_p1:
-    protecao_ativa = st.toggle("Ativar Protecao", value=True)
-
+    protecao_ativa = st.toggle("Ativar prote\u00e7\u00e3o", value=True)
 with col_p2:
     valor_mercadoria = 0.0
     if protecao_ativa:
@@ -442,16 +499,19 @@ with col_p2:
         )
 
 if protecao_ativa and valor_mercadoria > 0:
-    valor_protecao_display = calcular_protecao(valor_mercadoria, "BASE")
-    st.caption(f"Valor adicional de protecao: R$ {valor_protecao_display:.2f}")
+    vp = calcular_protecao(valor_mercadoria, "BASE")
+    st.caption(f"Prote\u00e7\u00e3o adicional: R$ {vp:.2f}")
 
 # ============================================================
-# CALCULAR
+# BOTÃO CALCULAR
 # ============================================================
-st.markdown("---")
+st.markdown("")
+st.markdown("")
+calcular = st.button("CALCULAR COTA\u00c7\u00c3O", use_container_width=True)
 
-calcular = st.button("CALCULAR COTACAO", use_container_width=True)
-
+# ============================================================
+# RESULTADO
+# ============================================================
 if calcular:
     resultado = calcular_cotacao(
         veiculo=veiculo_selecionado,
@@ -465,97 +525,96 @@ if calcular:
         adicional_selecionado=adicional
     )
 
-    # RESULTADO
     st.markdown(f"""
     <div class="result-card">
-        <div class="result-label">VALOR TOTAL DA COTACAO</div>
+        <div class="result-label">VALOR DA COTA\u00c7\u00c3O</div>
         <div class="result-total">R$ {resultado['total']:,.2f}</div>
     </div>
     """, unsafe_allow_html=True)
 
     # KPIs
-    col_k1, col_k2, col_k3 = st.columns(3)
-
-    with col_k1:
-        st.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-label">DISTANCIA</div>
-            <div class="kpi-value">{km_total} km</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with col_k2:
-        st.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-label">PARADAS</div>
-            <div class="kpi-value">{n_paradas}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with col_k3:
-        st.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-label">VEICULO</div>
-            <div class="kpi-value-highlight">{veiculo_selecionado}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    # DETALHAMENTO
-    st.markdown('<p class="section-title">Detalhamento</p>', unsafe_allow_html=True)
-
     st.markdown(f"""
-    <div class="detail-row">
-        <span class="detail-label">Taxa base ({veiculo_selecionado})</span>
-        <span class="detail-value">R$ {resultado['taxa_base']:.2f}</span>
-    </div>
-    <div class="detail-row">
-        <span class="detail-label">Quilometragem ({km_total} km x R$ {PRECOS['BASE'][veiculo_selecionado]['valor_km']:.2f})</span>
-        <span class="detail-value">R$ {resultado['valor_km']:.2f}</span>
-    </div>
-    <div class="detail-row">
-        <span class="detail-label">Paradas ({n_paradas} pontos)</span>
-        <span class="detail-value">R$ {resultado['taxa_pontos']:.2f}</span>
+    <div class="kpi-row">
+        <div class="kpi-item">
+            <div class="kpi-item-label">Dist\u00e2ncia</div>
+            <div class="kpi-item-value">{km_total} km</div>
+        </div>
+        <div class="kpi-item">
+            <div class="kpi-item-label">Paradas</div>
+            <div class="kpi-item-value">{n_paradas}</div>
+        </div>
+        <div class="kpi-item">
+            <div class="kpi-item-label">Ve\u00edculo</div>
+            <div class="kpi-item-value">{veiculo_selecionado}</div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-    if resultado['adicional'] > 0:
-        st.markdown(f"""
-        <div class="detail-row">
-            <span class="detail-label">Periodo: {adicional}</span>
-            <span class="detail-value">R$ {resultado['adicional']:.2f}</span>
+    # Detalhamento
+    detalhes_html = f"""
+    <div class="breakdown-card">
+        <div class="breakdown-row">
+            <span class="breakdown-name">Taxa base ({veiculo_selecionado})</span>
+            <span class="breakdown-value">R$ {resultado['taxa_base']:.2f}</span>
         </div>
-        """, unsafe_allow_html=True)
+        <div class="breakdown-row">
+            <span class="breakdown-name">Quilometragem ({km_total} km \u00d7 R$ {PRECOS['BASE'][veiculo_selecionado]['valor_km']:.2f})</span>
+            <span class="breakdown-value">R$ {resultado['valor_km']:.2f}</span>
+        </div>
+        <div class="breakdown-row">
+            <span class="breakdown-name">Pontos de entrega ({n_paradas})</span>
+            <span class="breakdown-value">R$ {resultado['taxa_pontos']:.2f}</span>
+        </div>
+    """
+
+    if resultado['adicional'] > 0:
+        detalhes_html += f"""
+        <div class="breakdown-row">
+            <span class="breakdown-name">{adicional}</span>
+            <span class="breakdown-value">R$ {resultado['adicional']:.2f}</span>
+        </div>
+        """
 
     if resultado['protecao'] > 0:
-        st.markdown(f"""
-        <div class="detail-row">
-            <span class="detail-label">Protecao de Carga</span>
-            <span class="detail-value">R$ {resultado['protecao']:.2f}</span>
+        detalhes_html += f"""
+        <div class="breakdown-row">
+            <span class="breakdown-name">Prote\u00e7\u00e3o de carga</span>
+            <span class="breakdown-value">R$ {resultado['protecao']:.2f}</span>
         </div>
-        """, unsafe_allow_html=True)
+        """
 
-    # RESUMO WHATSAPP
-    st.markdown("---")
-    msg = f"""*TRANSFELOG | Cotacao*
+    detalhes_html += f"""
+        <div class="breakdown-total">
+            <span class="breakdown-total-label">Total</span>
+            <span class="breakdown-total-value">R$ {resultado['total']:,.2f}</span>
+        </div>
+    </div>
+    """
 
-Veiculo: {veiculo_selecionado}
-Distancia: {km_total} km
-Paradas: {n_paradas}
-Periodo: {adicional}
-{'Protecao de Carga: Inclusa' if protecao_ativa else ''}
+    st.markdown(detalhes_html, unsafe_allow_html=True)
+
+    # Texto para copiar/enviar
+    st.markdown("")
+    msg = f"""*TRANSFELOG | Cota\u00e7\u00e3o de Frete*
+
+Ve\u00edculo: {veiculo_selecionado}
+Dist\u00e2ncia: {km_total} km
+Pontos de entrega: {n_paradas}
+Per\u00edodo: {adicional}
+{'Prote\u00e7\u00e3o de carga: Inclusa' if protecao_ativa else ''}
 
 *TOTAL: R$ {resultado['total']:,.2f}*
 
 Grupo Transfelog do Brasil
 transfelog.streamlit.app"""
 
-    st.text_area("Copiar cotacao", msg, height=180)
+    st.text_area("Copiar cota\u00e7\u00e3o", msg, height=200, label_visibility="collapsed")
 
 # ============================================================
 # FOOTER
 # ============================================================
 st.markdown("""
-<div class="footer">
-    Transfelog App  |  Grupo Transfelog do Brasil  |  SP e ABC Paulista
+<div class="app-footer">
+    Transfelog App \u00b7 Grupo Transfelog do Brasil \u00b7 S\u00e3o Paulo e ABC Paulista
 </div>
 """, unsafe_allow_html=True)
