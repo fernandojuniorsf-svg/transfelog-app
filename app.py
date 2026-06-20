@@ -1,5 +1,5 @@
+```python
 import streamlit as st
-import requests
 from datetime import datetime
 
 # ============================================================
@@ -26,6 +26,17 @@ st.markdown("""
         border-radius: 16px;
         margin-bottom: 2rem;
         box-shadow: 0 8px 32px rgba(74, 155, 168, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    .header-logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+    }
+    .header-text {
+        flex: 1;
     }
     .header-title {
         color: #ffffff;
@@ -131,10 +142,6 @@ st.markdown("""
         font-size: 0.9rem;
         margin-top: 0.2rem;
     }
-    .route-km {
-        color: #6b7280;
-        font-size: 0.8rem;
-    }
     .stButton > button {
         background: linear-gradient(135deg, #4A9BA8 0%, #3d8a96 100%);
         color: white;
@@ -151,16 +158,6 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(74, 155, 168, 0.4);
         transform: translateY(-1px);
     }
-    .savings-badge {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.85rem;
-        display: inline-block;
-        margin-top: 0.5rem;
-    }
     .footer {
         text-align: center;
         color: #9ca3af;
@@ -168,6 +165,15 @@ st.markdown("""
         margin-top: 3rem;
         padding: 1.5rem;
         border-top: 1px solid #e5e7eb;
+    }
+    .locked-badge {
+        background: #f3f4f6;
+        color: #9ca3af;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: inline-block;
     }
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
@@ -242,96 +248,18 @@ PROTECAO = {
 }
 
 ADICIONAIS = {
-    "pico": 0.15,
-    "noturno": 0.25,
-    "sabado": 0.20,
-    "domingo_feriado": 0.30,
-    "zmrc": 0.10,
+    "Horario comercial": 0,
+    "Pico": 0.15,
+    "Noturno": 0.25,
+    "Sabado": 0.20,
+    "Domingo ou Feriado": 0.30,
+    "Zona de restricao (ZMRC)": 0.10,
 }
 
 # ============================================================
-# GOOGLE MAPS API KEY (via Streamlit Secrets)
+# URL DA LOGO (do espaco Transfelog App)
 # ============================================================
-GOOGLE_MAPS_API_KEY = st.secrets.get("GOOGLE_MAPS_API_KEY", "")
-
-# ============================================================
-# FUNCOES DE ROTEIRIZACAO
-# ============================================================
-
-def calcular_distancia_google(origem, destinos, otimizar=True):
-    if not GOOGLE_MAPS_API_KEY:
-        return simular_distancias(origem, destinos, otimizar)
-
-    try:
-        url = "https://maps.googleapis.com/maps/api/directions/json"
-
-        if len(destinos) == 1:
-            params = {
-                "origin": origem,
-                "destination": destinos[0],
-                "key": GOOGLE_MAPS_API_KEY,
-                "language": "pt-BR",
-            }
-        else:
-            waypoints_str = "|".join(destinos[:-1])
-            opt = "optimize:true|" if otimizar else ""
-            params = {
-                "origin": origem,
-                "destination": destinos[-1],
-                "waypoints": f"{opt}{waypoints_str}",
-                "key": GOOGLE_MAPS_API_KEY,
-                "language": "pt-BR",
-            }
-
-        response = requests.get(url, params=params, timeout=10)
-        data = response.json()
-
-        if data["status"] == "OK":
-            route = data["routes"][0]
-            km_total = sum(leg["distance"]["value"] for leg in route["legs"]) / 1000
-            ordem = route.get("waypoint_order", list(range(len(destinos))))
-
-            detalhes = []
-            for i, leg in enumerate(route["legs"]):
-                idx = ordem[i] if i < len(ordem) else len(destinos) - 1
-                detalhes.append({
-                    "trecho": i + 1,
-                    "km": round(leg["distance"]["value"] / 1000, 1),
-                    "tempo": leg["duration"]["text"],
-                    "endereco": destinos[idx] if idx < len(destinos) else destinos[-1]
-                })
-
-            return round(km_total, 1), ordem, detalhes
-
-    except Exception:
-        pass
-
-    return simular_distancias(origem, destinos, otimizar)
-
-
-def simular_distancias(origem, destinos, otimizar=True):
-    import random
-    random.seed(hash(origem + "".join(destinos)) % 100)
-
-    n_pontos = len(destinos)
-    distancias = [round(random.uniform(3, 18), 1) for _ in range(n_pontos)]
-
-    if otimizar and n_pontos > 2:
-        distancias.sort()
-
-    km_total = sum(distancias)
-    ordem = list(range(n_pontos))
-
-    detalhes = []
-    for i in range(n_pontos):
-        detalhes.append({
-            "trecho": i + 1,
-            "km": distancias[i],
-            "endereco": destinos[ordem[i]]
-        })
-
-    return round(km_total, 1), ordem, detalhes
-
+LOGO_URL = "https://d2w9rnfcy7mm78.cloudfront.net/transfelog-logo.png"
 
 # ============================================================
 # FUNCOES DE CALCULO
@@ -376,17 +304,8 @@ def calcular_cotacao(veiculo, tier, km_total, n_pontos, tipo_carga,
         subtotal = subtotal * (percentual_complemento / 100)
 
     valor_adicional = 0
-    if adicional_selecionado != "Nenhum":
-        mapa_adicionais = {
-            "Pico (+15%)": "pico",
-            "Noturno (+25%)": "noturno",
-            "Sabado (+20%)": "sabado",
-            "Domingo/Feriado (+30%)": "domingo_feriado",
-            "ZMRC (+10%)": "zmrc",
-        }
-        chave = mapa_adicionais.get(adicional_selecionado, "")
-        if chave in ADICIONAIS:
-            valor_adicional = subtotal * ADICIONAIS[chave]
+    if adicional_selecionado in ADICIONAIS:
+        valor_adicional = subtotal * ADICIONAIS[adicional_selecionado]
 
     valor_protecao = 0
     if protecao_ativa and valor_mercadoria > 0:
@@ -402,6 +321,7 @@ def calcular_cotacao(veiculo, tier, km_total, n_pontos, tipo_carga,
         "n_pontos": n_pontos,
         "subtotal": subtotal,
         "adicional": valor_adicional,
+        "adicional_nome": adicional_selecionado,
         "protecao": valor_protecao,
         "total": round(total, 2),
         "tipo_carga": tipo_carga,
@@ -412,14 +332,25 @@ def calcular_cotacao(veiculo, tier, km_total, n_pontos, tipo_carga,
 # INTERFACE PRINCIPAL
 # ============================================================
 
+# HEADER COM LOGO
 st.markdown("""
 <div class="header-container">
-    <div class="header-title">TRANSFELOG APP</div>
-    <div class="header-subtitle">Grupo Transfelog do Brasil  |  Cotacao e Roteirizacao</div>
+    <div class="header-text">
+        <div class="header-title">TRANSFELOG</div>
+        <div class="header-subtitle">Grupo Transfelog do Brasil  |  Cotacao de Frete</div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
+# Tenta exibir logo do espaco
+try:
+    st.image("logo.png", width=80)
+except:
+    pass
+
+# ============================================================
 # SELECAO DE VEICULO
+# ============================================================
 st.markdown('<p class="section-title">Tipo de Veiculo</p>', unsafe_allow_html=True)
 
 veiculo_selecionado = st.radio(
@@ -432,57 +363,67 @@ veiculo_selecionado = st.radio(
 info_v = VEICULOS_INFO[veiculo_selecionado]
 st.caption(f"{veiculo_selecionado}  |  Capacidade: {info_v['capacidade']}  |  Volume: {info_v['volume']}")
 
-# TIER E TIPO DE CARGA
-col1, col2, col3 = st.columns(3)
+# ============================================================
+# CONFIGURACOES DA COTACAO
+# ============================================================
+st.markdown('<p class="section-title">Detalhes da Carga</p>', unsafe_allow_html=True)
+
+col1, col2 = st.columns(2)
 
 with col1:
-    tier = st.selectbox("Tier do Cliente", ["BASE", "PLUS", "PREMIUM"])
-
-with col2:
     tipo_carga = st.selectbox("Tipo de Carga", ["Carga Completa", "Complemento"])
 
-with col3:
+with col2:
     percentual_complemento = 100
     if tipo_carga == "Complemento":
-        percentual_complemento = st.slider("% do espaco utilizado", 40, 100, 60)
+        percentual_complemento = st.slider("Percentual do espaco utilizado", 40, 100, 60)
     else:
         st.write("")
-        st.caption("Veiculo exclusivo")
+        st.caption("Veiculo exclusivo para sua carga")
 
-# ENDERECOS
-st.markdown('<p class="section-title">Enderecos</p>', unsafe_allow_html=True)
+# ============================================================
+# DISTANCIA E PARADAS (ENTRADA MANUAL)
+# ============================================================
+st.markdown('<p class="section-title">Distancia e Paradas</p>', unsafe_allow_html=True)
 
-origem = st.text_input("Endereco de Coleta (Origem)", placeholder="Ex: Rua das Flores, 123 - Santo Andre, SP")
+col_km, col_paradas = st.columns(2)
 
-st.caption("Pontos de Entrega")
-
-if "n_paradas" not in st.session_state:
-    st.session_state.n_paradas = 3
-
-destinos = []
-for i in range(st.session_state.n_paradas):
-    endereco = st.text_input(
-        f"Ponto {i+1}",
-        key=f"destino_{i}",
-        placeholder=f"Endereco do ponto de entrega {i+1}",
-        label_visibility="collapsed"
+with col_km:
+    km_total = st.number_input(
+        "Distancia total (km)",
+        min_value=1.0,
+        max_value=500.0,
+        value=25.0,
+        step=1.0,
+        help="Informe a distancia total do percurso em quilometros"
     )
-    if endereco:
-        destinos.append(endereco)
 
-col_add, col_remove, _ = st.columns([1, 1, 4])
-with col_add:
-    if st.button("+ Adicionar ponto"):
-        if st.session_state.n_paradas < 20:
-            st.session_state.n_paradas += 1
-            st.rerun()
-with col_remove:
-    if st.button("- Remover ponto"):
-        if st.session_state.n_paradas > 1:
-            st.session_state.n_paradas -= 1
-            st.rerun()
+with col_paradas:
+    n_paradas = st.number_input(
+        "Quantidade de paradas",
+        min_value=1,
+        max_value=20,
+        value=3,
+        step=1,
+        help="Quantidade de pontos de entrega"
+    )
 
+# Roteirizador (bloqueado)
+st.markdown('<span class="locked-badge">Roteirizador automatico — em breve</span>', unsafe_allow_html=True)
+
+# ============================================================
+# PERIODO DE ENTREGA
+# ============================================================
+st.markdown('<p class="section-title">Periodo de Entrega</p>', unsafe_allow_html=True)
+
+adicional = st.selectbox(
+    "Selecione o periodo",
+    list(ADICIONAIS.keys())
+)
+
+# ============================================================
 # PROTECAO DE CARGA
+# ============================================================
 st.markdown('<p class="section-title">Protecao de Carga</p>', unsafe_allow_html=True)
 
 col_p1, col_p2 = st.columns([1, 2])
@@ -502,197 +443,118 @@ with col_p2:
         )
 
 if protecao_ativa and valor_mercadoria > 0:
-    taxa_display = "0,23%" if tier == "BASE" else ("0,21%" if tier == "PLUS" else "0,18%")
-    valor_protecao_display = calcular_protecao(valor_mercadoria, tier)
-    st.caption(f"Taxa: {taxa_display}  |  Valor adicional: R$ {valor_protecao_display:.2f}")
+    valor_protecao_display = calcular_protecao(valor_mercadoria, "BASE")
+    st.caption(f"Valor adicional de protecao: R$ {valor_protecao_display:.2f}")
 
-# ADICIONAIS E MODO DE ROTA
-col_ad1, col_ad2 = st.columns(2)
-with col_ad1:
-    adicional = st.selectbox(
-        "Adicional de horario/dia",
-        ["Nenhum", "Pico (+15%)", "Noturno (+25%)", "Sabado (+20%)", "Domingo/Feriado (+30%)", "ZMRC (+10%)"]
-    )
-
-with col_ad2:
-    modo_rota = st.selectbox("Modo de Rota", ["Roteirizar (menor km)", "Manter ordem manual"])
-
+# ============================================================
 # CALCULAR
+# ============================================================
 st.markdown("---")
 
 calcular = st.button("CALCULAR COTACAO", use_container_width=True)
 
 if calcular:
-    if not origem:
-        st.warning("Preencha o endereco de coleta.")
-    elif len(destinos) == 0:
-        st.warning("Adicione ao menos um ponto de entrega.")
-    else:
-        otimizar = "Roteirizar" in modo_rota
-        km_total, ordem, detalhes = calcular_distancia_google(origem, destinos, otimizar)
+    resultado = calcular_cotacao(
+        veiculo=veiculo_selecionado,
+        tier="BASE",
+        km_total=km_total,
+        n_pontos=n_paradas,
+        tipo_carga=tipo_carga,
+        percentual_complemento=percentual_complemento,
+        protecao_ativa=protecao_ativa,
+        valor_mercadoria=valor_mercadoria,
+        adicional_selecionado=adicional
+    )
 
-        km_manual = km_total
-        if otimizar:
-            km_manual_calc, _, _ = simular_distancias(origem, destinos, False)
-            km_manual = km_manual_calc if km_manual_calc > km_total else km_total * 1.22
+    # RESULTADO
+    st.markdown(f"""
+    <div class="result-card">
+        <div class="result-label">VALOR TOTAL DA COTACAO</div>
+        <div class="result-total">R$ {resultado['total']:,.2f}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-        resultado = calcular_cotacao(
-            veiculo=veiculo_selecionado,
-            tier=tier,
-            km_total=km_total,
-            n_pontos=len(destinos),
-            tipo_carga=tipo_carga,
-            percentual_complemento=percentual_complemento,
-            protecao_ativa=protecao_ativa,
-            valor_mercadoria=valor_mercadoria,
-            adicional_selecionado=adicional
-        )
+    # KPIs
+    col_k1, col_k2, col_k3 = st.columns(3)
 
-        # RESULTADO
+    with col_k1:
         st.markdown(f"""
-        <div class="result-card">
-            <div class="result-label">VALOR TOTAL DA COTACAO</div>
-            <div class="result-total">R$ {resultado['total']:,.2f}</div>
+        <div class="kpi-card">
+            <div class="kpi-label">DISTANCIA</div>
+            <div class="kpi-value">{km_total} km</div>
         </div>
         """, unsafe_allow_html=True)
 
-        # KPIs
-        col_k1, col_k2, col_k3, col_k4 = st.columns(4)
+    with col_k2:
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-label">PARADAS</div>
+            <div class="kpi-value">{n_paradas}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-        with col_k1:
-            st.markdown(f"""
-            <div class="kpi-card">
-                <div class="kpi-label">DISTANCIA TOTAL</div>
-                <div class="kpi-value">{km_total} km</div>
-            </div>
-            """, unsafe_allow_html=True)
+    with col_k3:
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-label">VEICULO</div>
+            <div class="kpi-value-highlight">{veiculo_selecionado}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-        with col_k2:
-            st.markdown(f"""
-            <div class="kpi-card">
-                <div class="kpi-label">PARADAS</div>
-                <div class="kpi-value">{len(destinos)}</div>
-            </div>
-            """, unsafe_allow_html=True)
+    # DETALHAMENTO
+    st.markdown('<p class="section-title">Detalhamento</p>', unsafe_allow_html=True)
 
-        with col_k3:
-            st.markdown(f"""
-            <div class="kpi-card">
-                <div class="kpi-label">VEICULO</div>
-                <div class="kpi-value">{veiculo_selecionado}</div>
-            </div>
-            """, unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="detail-row">
+        <span class="detail-label">Taxa base ({veiculo_selecionado})</span>
+        <span class="detail-value">R$ {resultado['taxa_base']:.2f}</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Quilometragem ({km_total} km x R$ {PRECOS['BASE'][veiculo_selecionado]['valor_km']:.2f})</span>
+        <span class="detail-value">R$ {resultado['valor_km']:.2f}</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Paradas ({n_paradas} pontos)</span>
+        <span class="detail-value">R$ {resultado['taxa_pontos']:.2f}</span>
+    </div>
+    """, unsafe_allow_html=True)
 
-        with col_k4:
-            st.markdown(f"""
-            <div class="kpi-card">
-                <div class="kpi-label">TIER</div>
-                <div class="kpi-value-highlight">{tier}</div>
-            </div>
-            """, unsafe_allow_html=True)
+    if resultado['adicional'] > 0:
+        st.markdown(f"""
+        <div class="detail-row">
+            <span class="detail-label">Periodo: {adicional}</span>
+            <span class="detail-value">R$ {resultado['adicional']:.2f}</span>
+        </div>
+        """, unsafe_allow_html=True)
 
-        # DETALHAMENTO
-        st.markdown('<p class="section-title">Detalhamento</p>', unsafe_allow_html=True)
+    if resultado['protecao'] > 0:
+        st.markdown(f"""
+        <div class="detail-row">
+            <span class="detail-label">Protecao de Carga</span>
+            <span class="detail-value">R$ {resultado['protecao']:.2f}</span>
+        </div>
+        """, unsafe_allow_html=True)
 
-        col_d1, col_d2 = st.columns(2)
-
-        with col_d1:
-            st.markdown(f"""
-            <div class="detail-row">
-                <span class="detail-label">Taxa base ({veiculo_selecionado})</span>
-                <span class="detail-value">R$ {resultado['taxa_base']:.2f}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Quilometragem ({km_total} km x R$ {PRECOS[tier][veiculo_selecionado]['valor_km']:.2f})</span>
-                <span class="detail-value">R$ {resultado['valor_km']:.2f}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Paradas ({len(destinos)} pontos)</span>
-                <span class="detail-value">R$ {resultado['taxa_pontos']:.2f}</span>
-            </div>
-            """, unsafe_allow_html=True)
-
-            if resultado['adicional'] > 0:
-                st.markdown(f"""
-                <div class="detail-row">
-                    <span class="detail-label">Adicional ({adicional})</span>
-                    <span class="detail-value">R$ {resultado['adicional']:.2f}</span>
-                </div>
-                """, unsafe_allow_html=True)
-
-            if resultado['protecao'] > 0:
-                st.markdown(f"""
-                <div class="detail-row">
-                    <span class="detail-label">Protecao de Carga ({taxa_display})</span>
-                    <span class="detail-value">R$ {resultado['protecao']:.2f}</span>
-                </div>
-                """, unsafe_allow_html=True)
-
-        with col_d2:
-            st.markdown("**Rota:**")
-            for i, detalhe in enumerate(detalhes):
-                st.markdown(f"""
-                <div class="route-step">
-                    <span class="route-number">{i+1}.</span>
-                    <span class="route-address">{detalhe['endereco']}</span>
-                    <span class="route-km"> | {detalhe['km']} km</span>
-                </div>
-                """, unsafe_allow_html=True)
-
-        # ECONOMIA
-        if otimizar and km_manual > km_total:
-            economia_km = km_manual - km_total
-            economia_pct = (economia_km / km_manual) * 100
-            resultado_manual = calcular_cotacao(
-                veiculo=veiculo_selecionado, tier=tier, km_total=km_manual,
-                n_pontos=len(destinos), tipo_carga=tipo_carga,
-                percentual_complemento=percentual_complemento,
-                protecao_ativa=protecao_ativa, valor_mercadoria=valor_mercadoria,
-                adicional_selecionado=adicional
-            )
-            economia_valor = resultado_manual['total'] - resultado['total']
-
-            st.markdown(f"""
-            <div class="savings-badge">
-                Economia com roteirizacao: R$ {economia_valor:.2f} ({economia_pct:.1f}% menos km)
-            </div>
-            """, unsafe_allow_html=True)
-
-        # ACOES
-        st.markdown("---")
-        col_b1, col_b2, col_b3 = st.columns(3)
-
-        with col_b1:
-            enderecos_formatados = f"COLETA: {origem}\n"
-            for i, det in enumerate(detalhes):
-                enderecos_formatados += f"{i+1}. {det['endereco']}\n"
-
-            st.text_area("Copiar enderecos (ordem otimizada)", enderecos_formatados, height=150)
-
-        with col_b2:
-            msg_whatsapp = f"""*TRANSFELOG | Cotacao #{datetime.now().strftime('%d%m%y%H%M')}*
+    # RESUMO WHATSAPP
+    st.markdown("---")
+    msg = f"""*TRANSFELOG | Cotacao*
 
 Veiculo: {veiculo_selecionado}
 Distancia: {km_total} km
-Paradas: {len(destinos)}
-{'Protecao de Carga: Sim' if protecao_ativa else ''}
+Paradas: {n_paradas}
+Periodo: {adicional}
+{'Protecao de Carga: Inclusa' if protecao_ativa else ''}
 
 *TOTAL: R$ {resultado['total']:,.2f}*
 
-Grupo Transfelog do Brasil"""
+Grupo Transfelog do Brasil
+transfelog.streamlit.app"""
 
-            st.text_area("Enviar por WhatsApp", msg_whatsapp, height=150)
+    st.text_area("Copiar cotacao", msg, height=180)
 
-        with col_b3:
-            st.markdown("**Controle interno:**")
-            custo_estimado = resultado['total'] * 0.55
-            lucro_estimado = resultado['total'] - custo_estimado
-            margem = (lucro_estimado / resultado['total']) * 100
-            st.caption(f"Custo estimado: R$ {custo_estimado:.2f}")
-            st.caption(f"Lucro estimado: R$ {lucro_estimado:.2f}")
-            st.caption(f"Margem: {margem:.0f}%")
-
+# ============================================================
 # FOOTER
+# ============================================================
 st.markdown("""
 <div class="footer">
     Transfelog App  |  Grupo Transfelog do Brasil  |  SP e ABC Paulista
