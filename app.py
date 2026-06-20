@@ -1,3 +1,4 @@
+```python
 import streamlit as st
 from datetime import datetime
 
@@ -12,7 +13,7 @@ st.set_page_config(
 )
 
 # ============================================================
-# CSS - DESIGN MODERNO, CLEAN, GRADIENTES
+# CSS - DESIGN MODERNO
 # ============================================================
 st.markdown("""
 <style>
@@ -22,8 +23,6 @@ st.markdown("""
         background: linear-gradient(160deg, #f0f4f7 0%, #e8eef3 50%, #f5f8fa 100%);
         font-family: 'Inter', sans-serif;
     }
-
-    /* Header */
     .app-header {
         background: linear-gradient(135deg, #1a2332 0%, #243447 40%, #4A9BA8 100%);
         padding: 1.8rem 2rem;
@@ -73,10 +72,7 @@ st.markdown("""
         color: rgba(255,255,255,0.6);
         font-size: 0.8rem;
         margin: 0.2rem 0 0 0;
-        font-weight: 400;
     }
-
-    /* Seções */
     .section-label {
         color: #1a2332;
         font-size: 0.85rem;
@@ -87,8 +83,6 @@ st.markdown("""
         padding-left: 0.5rem;
         border-left: 3px solid #4A9BA8;
     }
-
-    /* Card de resultado */
     .result-card {
         background: linear-gradient(135deg, #ffffff 0%, #f4fafb 100%);
         border-radius: 20px;
@@ -113,8 +107,6 @@ st.markdown("""
         -webkit-text-fill-color: transparent;
         margin: 0.5rem 0;
     }
-
-    /* Tier badge */
     .tier-badge-premium {
         background: linear-gradient(135deg, #f59e0b, #d97706);
         color: white;
@@ -123,7 +115,6 @@ st.markdown("""
         font-size: 0.72rem;
         font-weight: 600;
         display: inline-block;
-        letter-spacing: 0.5px;
     }
     .tier-badge-plus {
         background: linear-gradient(135deg, #4A9BA8, #3a7f8a);
@@ -133,7 +124,6 @@ st.markdown("""
         font-size: 0.72rem;
         font-weight: 600;
         display: inline-block;
-        letter-spacing: 0.5px;
     }
     .tier-badge-base {
         background: linear-gradient(135deg, #6b7280, #4b5563);
@@ -143,10 +133,7 @@ st.markdown("""
         font-size: 0.72rem;
         font-weight: 600;
         display: inline-block;
-        letter-spacing: 0.5px;
     }
-
-    /* KPI cards */
     .kpi-row {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -174,8 +161,6 @@ st.markdown("""
         font-weight: 700;
         margin-top: 0.3rem;
     }
-
-    /* Detalhamento */
     .breakdown-card {
         background: #ffffff;
         border-radius: 14px;
@@ -196,7 +181,6 @@ st.markdown("""
     .breakdown-name {
         color: #4b5563;
         font-size: 0.85rem;
-        font-weight: 400;
     }
     .breakdown-value {
         color: #1a2332;
@@ -221,8 +205,6 @@ st.markdown("""
         font-size: 1.2rem;
         font-weight: 800;
     }
-
-    /* Locked badge */
     .locked-badge {
         background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
         color: #9ca3af;
@@ -233,8 +215,34 @@ st.markdown("""
         display: inline-block;
         margin-top: 0.5rem;
     }
-
-    /* Botão principal */
+    .info-box {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-radius: 10px;
+        padding: 0.8rem 1rem;
+        font-size: 0.8rem;
+        color: #92400e;
+        margin: 1rem 0;
+    }
+    .success-box {
+        background: #ecfdf5;
+        border: 1px solid #6ee7b7;
+        border-radius: 10px;
+        padding: 0.8rem 1rem;
+        font-size: 0.8rem;
+        color: #065f46;
+        margin: 1rem 0;
+    }
+    .cupom-badge {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-left: 0.5rem;
+    }
     .stButton > button {
         background: linear-gradient(135deg, #4A9BA8 0%, #3a7f8a 100%);
         color: white;
@@ -243,7 +251,6 @@ st.markdown("""
         padding: 0.9rem 2.5rem;
         font-weight: 600;
         font-size: 1rem;
-        letter-spacing: 0.3px;
         transition: all 0.3s ease;
         box-shadow: 0 6px 20px rgba(74, 155, 168, 0.3);
     }
@@ -252,8 +259,6 @@ st.markdown("""
         box-shadow: 0 8px 28px rgba(74, 155, 168, 0.4);
         transform: translateY(-2px);
     }
-
-    /* Footer */
     .app-footer {
         text-align: center;
         color: #b0b8c4;
@@ -261,24 +266,13 @@ st.markdown("""
         margin-top: 3rem;
         padding: 1.5rem;
         border-top: 1px solid #e8eef3;
-        font-weight: 400;
     }
-
-    /* Esconder defaults do Streamlit */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
-
-    /* Inputs */
-    .stSelectbox > div > div {
-        border-radius: 12px;
-    }
-    .stTextInput > div > div > input {
-        border-radius: 12px;
-    }
-    .stNumberInput > div > div > input {
-        border-radius: 12px;
-    }
+    .stSelectbox > div > div { border-radius: 12px; }
+    .stTextInput > div > div > input { border-radius: 12px; }
+    .stNumberInput > div > div > input { border-radius: 12px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -292,48 +286,61 @@ CODIGOS_TIER = {
     "06121990": "BASE",
 }
 
+# Cupons temporários de desconto por km
+CUPONS_DESCONTO = {
+    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
+    "FRETE20": {"desconto_pct": 20, "descricao": "20% de desconto", "validade": "2026-07-15"},
+    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de desconto (inaugura\u00e7\u00e3o)", "validade": "2026-08-31"},
+}
+
+FATOR_CUBAGEM = 300  # kg/m³ padrão rodoviário
+
 PRECOS = {
     "BASE": {
         "Moto": {"taxa_base": 28, "valor_km": 4.50, "ponto_f1": 8, "ponto_f2": 12, "ponto_f3": 18},
         "Carro": {"taxa_base": 50, "valor_km": 5.50, "ponto_f1": 10, "ponto_f2": 15, "ponto_f3": 22},
         "Fiorino": {"taxa_base": 80, "valor_km": 7.00, "ponto_f1": 12, "ponto_f2": 18, "ponto_f3": 25},
         "Van": {"taxa_base": 130, "valor_km": 8.50, "ponto_f1": 15, "ponto_f2": 22, "ponto_f3": 30},
-        "VUC": {"taxa_base": 180, "valor_km": 10.00, "ponto_f1": 18, "ponto_f2": 26, "ponto_f3": 35},
-        "3/4": {"taxa_base": 250, "valor_km": 11.50, "ponto_f1": 22, "ponto_f2": 30, "ponto_f3": 40},
-        "Truck": {"taxa_base": 350, "valor_km": 13.00, "ponto_f1": 25, "ponto_f2": 35, "ponto_f3": 48},
-        "Carreta": {"taxa_base": 550, "valor_km": 16.00, "ponto_f1": 30, "ponto_f2": 42, "ponto_f3": 58},
+        "VUC": {"taxa_base": 160, "valor_km": 8.50, "ponto_f1": 18, "ponto_f2": 26, "ponto_f3": 35},
+        "3/4": {"taxa_base": 220, "valor_km": 10.00, "ponto_f1": 22, "ponto_f2": 30, "ponto_f3": 40},
+        "Toco": {"taxa_base": 300, "valor_km": 11.50, "ponto_f1": 25, "ponto_f2": 35, "ponto_f3": 48},
+        "Truck": {"taxa_base": 400, "valor_km": 13.00, "ponto_f1": 28, "ponto_f2": 38, "ponto_f3": 52},
+        "Carreta": {"taxa_base": 550, "valor_km": 16.00, "ponto_f1": 32, "ponto_f2": 45, "ponto_f3": 60},
     },
     "PLUS": {
         "Moto": {"taxa_base": 22, "valor_km": 3.60, "ponto_f1": 6.50, "ponto_f2": 10, "ponto_f3": 14},
         "Carro": {"taxa_base": 40, "valor_km": 4.40, "ponto_f1": 8, "ponto_f2": 12, "ponto_f3": 17},
         "Fiorino": {"taxa_base": 64, "valor_km": 5.60, "ponto_f1": 10, "ponto_f2": 14, "ponto_f3": 20},
         "Van": {"taxa_base": 104, "valor_km": 6.80, "ponto_f1": 12, "ponto_f2": 17, "ponto_f3": 24},
-        "VUC": {"taxa_base": 144, "valor_km": 8.00, "ponto_f1": 14, "ponto_f2": 21, "ponto_f3": 28},
-        "3/4": {"taxa_base": 200, "valor_km": 9.20, "ponto_f1": 17, "ponto_f2": 24, "ponto_f3": 32},
-        "Truck": {"taxa_base": 280, "valor_km": 10.40, "ponto_f1": 20, "ponto_f2": 28, "ponto_f3": 38},
-        "Carreta": {"taxa_base": 440, "valor_km": 12.80, "ponto_f1": 24, "ponto_f2": 34, "ponto_f3": 46},
+        "VUC": {"taxa_base": 128, "valor_km": 6.80, "ponto_f1": 14, "ponto_f2": 21, "ponto_f3": 28},
+        "3/4": {"taxa_base": 176, "valor_km": 8.00, "ponto_f1": 17, "ponto_f2": 24, "ponto_f3": 32},
+        "Toco": {"taxa_base": 240, "valor_km": 9.20, "ponto_f1": 20, "ponto_f2": 28, "ponto_f3": 38},
+        "Truck": {"taxa_base": 320, "valor_km": 10.40, "ponto_f1": 22, "ponto_f2": 30, "ponto_f3": 42},
+        "Carreta": {"taxa_base": 440, "valor_km": 12.80, "ponto_f1": 26, "ponto_f2": 36, "ponto_f3": 48},
     },
     "PREMIUM": {
         "Moto": {"taxa_base": 18, "valor_km": 2.90, "ponto_f1": 5, "ponto_f2": 8, "ponto_f3": 11},
         "Carro": {"taxa_base": 32, "valor_km": 3.60, "ponto_f1": 6.50, "ponto_f2": 10, "ponto_f3": 14},
         "Fiorino": {"taxa_base": 52, "valor_km": 4.50, "ponto_f1": 8, "ponto_f2": 11, "ponto_f3": 16},
         "Van": {"taxa_base": 84, "valor_km": 5.50, "ponto_f1": 10, "ponto_f2": 14, "ponto_f3": 19},
-        "VUC": {"taxa_base": 117, "valor_km": 6.50, "ponto_f1": 12, "ponto_f2": 17, "ponto_f3": 22},
-        "3/4": {"taxa_base": 162, "valor_km": 7.50, "ponto_f1": 14, "ponto_f2": 19, "ponto_f3": 26},
-        "Truck": {"taxa_base": 228, "valor_km": 8.50, "ponto_f1": 16, "ponto_f2": 22, "ponto_f3": 30},
-        "Carreta": {"taxa_base": 358, "valor_km": 10.40, "ponto_f1": 19, "ponto_f2": 27, "ponto_f3": 37},
+        "VUC": {"taxa_base": 104, "valor_km": 5.50, "ponto_f1": 12, "ponto_f2": 17, "ponto_f3": 22},
+        "3/4": {"taxa_base": 143, "valor_km": 6.50, "ponto_f1": 14, "ponto_f2": 19, "ponto_f3": 26},
+        "Toco": {"taxa_base": 195, "valor_km": 7.50, "ponto_f1": 16, "ponto_f2": 22, "ponto_f3": 31},
+        "Truck": {"taxa_base": 260, "valor_km": 8.50, "ponto_f1": 18, "ponto_f2": 25, "ponto_f3": 34},
+        "Carreta": {"taxa_base": 358, "valor_km": 10.40, "ponto_f1": 21, "ponto_f2": 29, "ponto_f3": 39},
     }
 }
 
 VEICULOS_INFO = {
-    "Moto": {"capacidade": "20 kg", "volume": "0,1 m\u00b3", "desc": "Documentos e pequenos volumes"},
-    "Carro": {"capacidade": "300 kg", "volume": "1,5 m\u00b3", "desc": "Caixas e encomendas leves"},
-    "Fiorino": {"capacidade": "600 kg", "volume": "3,5 m\u00b3", "desc": "Entregas comerciais"},
-    "Van": {"capacidade": "1.500 kg", "volume": "12 m\u00b3", "desc": "Cargas m\u00e9dias e pallets"},
-    "VUC": {"capacidade": "3.000 kg", "volume": "18 m\u00b3", "desc": "Distribui\u00e7\u00e3o urbana"},
-    "3/4": {"capacidade": "4.000 kg", "volume": "25 m\u00b3", "desc": "Cargas industriais"},
-    "Truck": {"capacidade": "12.000 kg", "volume": "45 m\u00b3", "desc": "Grandes volumes"},
-    "Carreta": {"capacidade": "25.000 kg", "volume": "90 m\u00b3", "desc": "Carga completa pesada"},
+    "Moto": {"peso": "20 kg", "volume": "0,1 m\u00b3", "pallets": "-", "desc": "Documentos e pequenos volumes"},
+    "Carro": {"peso": "300 kg", "volume": "1 m\u00b3", "pallets": "-", "desc": "Urg\u00eancias e encomendas leves"},
+    "Fiorino": {"peso": "600 kg", "volume": "3,5 m\u00b3", "pallets": "2-3", "desc": "Entregas urbanas leves"},
+    "Van": {"peso": "1.500 kg", "volume": "12 m\u00b3", "pallets": "6", "desc": "E-commerce e cargas m\u00e9dias"},
+    "VUC": {"peso": "2.000 kg", "volume": "18 m\u00b3", "pallets": "8", "desc": "Carga urbana (entra na ZMRC)"},
+    "3/4": {"peso": "3.500 kg", "volume": "25 m\u00b3", "pallets": "10", "desc": "Distribui\u00e7\u00f5es regionais"},
+    "Toco": {"peso": "7.000 kg", "volume": "35 m\u00b3", "pallets": "12-14", "desc": "Eixo simples, carga m\u00e9dia-pesada"},
+    "Truck": {"peso": "14.000 kg", "volume": "45 m\u00b3", "pallets": "16-18", "desc": "Eixo duplo, grandes volumes"},
+    "Carreta": {"peso": "27.000 kg", "volume": "90 m\u00b3", "pallets": "24-28", "desc": "Carga completa pesada"},
 }
 
 PROTECAO = {
@@ -342,7 +349,6 @@ PROTECAO = {
     "taxa_cliente_premium": 0.0018,
     "custo_seguradora": 0.0008,
     "valor_minimo": 5.00,
-    "teto_cobertura": 500000,
 }
 
 ADICIONAIS = {
@@ -354,15 +360,41 @@ ADICIONAIS = {
     "Zona de restri\u00e7\u00e3o (ZMRC)": 0.10,
 }
 
+REPASSE_MOTORISTA = {
+    "proprio": 0.60,
+    "terceirizado": 0.68,
+}
+
 # ============================================================
-# FUNÇÕES DE CÁLCULO
+# FUNÇÕES
 # ============================================================
 
 def identificar_tier(codigo):
-    codigo_limpo = codigo.strip()
-    if codigo_limpo in CODIGOS_TIER:
-        return CODIGOS_TIER[codigo_limpo]
+    return CODIGOS_TIER.get(codigo.strip(), None)
+
+
+def validar_cupom(cupom):
+    cupom_upper = cupom.strip().upper()
+    if cupom_upper in CUPONS_DESCONTO:
+        dados = CUPONS_DESCONTO[cupom_upper]
+        validade = datetime.strptime(dados["validade"], "%Y-%m-%d")
+        if datetime.now() <= validade:
+            return dados
     return None
+
+
+def calcular_km_cobrado(km_ida):
+    if km_ida <= 50:
+        return km_ida
+    elif km_ida <= 150:
+        return km_ida + (km_ida * 0.50)
+    else:
+        return km_ida + (km_ida * 0.60)
+
+
+def calcular_peso_taxado(peso_real_kg, volume_m3):
+    peso_cubado = volume_m3 * FATOR_CUBAGEM
+    return max(peso_real_kg, peso_cubado), peso_cubado
 
 
 def calcular_taxa_pontos(n_pontos, preco_veiculo):
@@ -378,22 +410,21 @@ def calcular_taxa_pontos(n_pontos, preco_veiculo):
 
 
 def calcular_protecao(valor_mercadoria, tier):
-    if tier == "PLUS":
-        taxa = PROTECAO["taxa_cliente_plus"]
-    elif tier == "PREMIUM":
-        taxa = PROTECAO["taxa_cliente_premium"]
-    else:
-        taxa = PROTECAO["taxa_cliente_base"]
+    taxas = {"PREMIUM": 0.0018, "PLUS": 0.0021, "BASE": 0.0023}
+    taxa = taxas.get(tier, 0.0023)
     valor = valor_mercadoria * taxa
     return max(valor, PROTECAO["valor_minimo"])
 
 
-def calcular_cotacao(veiculo, tier, km_total, n_pontos, tipo_carga,
+def calcular_cotacao(veiculo, tier, km_ida, n_pontos, tipo_carga,
                      percentual_complemento, protecao_ativa, valor_mercadoria,
-                     adicional_selecionado):
+                     adicional_selecionado, cupom_dados):
+
     preco = PRECOS[tier][veiculo]
+    km_cobrado = calcular_km_cobrado(km_ida)
+
     taxa_base = preco["taxa_base"]
-    valor_km = km_total * preco["valor_km"]
+    valor_km = km_cobrado * preco["valor_km"]
     taxa_pontos = calcular_taxa_pontos(n_pontos, preco)
     subtotal = taxa_base + valor_km + taxa_pontos
 
@@ -408,25 +439,35 @@ def calcular_cotacao(veiculo, tier, km_total, n_pontos, tipo_carga,
     if protecao_ativa and valor_mercadoria > 0:
         valor_protecao = calcular_protecao(valor_mercadoria, tier)
 
-    total = subtotal + valor_adicional + valor_protecao
+    total_bruto = subtotal + valor_adicional + valor_protecao
+
+    desconto = 0
+    if cupom_dados:
+        desconto = total_bruto * (cupom_dados["desconto_pct"] / 100)
+
+    total = total_bruto - desconto
 
     return {
         "taxa_base": taxa_base,
         "valor_km": valor_km,
-        "km_total": km_total,
+        "km_ida": km_ida,
+        "km_cobrado": km_cobrado,
         "taxa_pontos": taxa_pontos,
         "n_pontos": n_pontos,
         "subtotal": subtotal,
         "adicional": valor_adicional,
-        "adicional_nome": adicional_selecionado,
         "protecao": valor_protecao,
+        "desconto": desconto,
+        "total_bruto": total_bruto,
         "total": round(total, 2),
         "tipo_carga": tipo_carga,
+        "motorista_proprio": round(total * REPASSE_MOTORISTA["proprio"], 2),
+        "motorista_terceirizado": round(total * REPASSE_MOTORISTA["terceirizado"], 2),
     }
 
 
 # ============================================================
-# HEADER COM LOGO
+# NAVEGAÇÃO (ABAS)
 # ============================================================
 
 st.markdown("""
@@ -442,237 +483,345 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ============================================================
-# CÓDIGO DO CLIENTE (TIER)
-# ============================================================
-st.markdown('<div class="section-label">Acesso</div>', unsafe_allow_html=True)
-
-codigo_cliente = st.text_input(
-    "C\u00f3digo do cliente",
-    type="password",
-    placeholder="Insira seu c\u00f3digo de acesso",
+aba = st.radio(
+    "Navega\u00e7\u00e3o",
+    ["Cota\u00e7\u00e3o de Frete", "Cadastro de Motorista"],
+    horizontal=True,
     label_visibility="collapsed"
 )
 
-tier_ativo = identificar_tier(codigo_cliente)
+# ============================================================
+# ABA 1 - COTAÇÃO DE FRETE (CLIENTE)
+# ============================================================
+if aba == "Cota\u00e7\u00e3o de Frete":
 
-if codigo_cliente and tier_ativo is None:
-    st.error("C\u00f3digo inv\u00e1lido. Verifique com seu consultor.")
-elif tier_ativo:
-    if tier_ativo == "PREMIUM":
-        st.markdown('<span class="tier-badge-premium">PREMIUM</span>', unsafe_allow_html=True)
-    elif tier_ativo == "PLUS":
-        st.markdown('<span class="tier-badge-plus">PLUS</span>', unsafe_allow_html=True)
-    else:
-        st.markdown('<span class="tier-badge-base">BASE</span>', unsafe_allow_html=True)
-
-# Só mostra o restante se o código for válido
-if tier_ativo:
-
-    # ============================================================
-    # SELEÇÃO DE VEÍCULO (DROPDOWN CLEAN)
-    # ============================================================
-    st.markdown('<div class="section-label">Ve\u00edculo</div>', unsafe_allow_html=True)
-
-    opcoes_veiculo = list(VEICULOS_INFO.keys())
-    veiculo_selecionado = st.selectbox(
-        "Selecione o ve\u00edculo",
-        opcoes_veiculo,
-        format_func=lambda v: f"{v}  \u2014  {VEICULOS_INFO[v]['capacidade']}  |  {VEICULOS_INFO[v]['volume']}",
+    st.markdown('<div class="section-label">Acesso</div>', unsafe_allow_html=True)
+    codigo_cliente = st.text_input(
+        "C\u00f3digo do cliente",
+        type="password",
+        placeholder="Insira seu c\u00f3digo de acesso",
         label_visibility="collapsed"
     )
-    st.caption(VEICULOS_INFO[veiculo_selecionado]["desc"])
 
-    # ============================================================
-    # TIPO DE CARGA
-    # ============================================================
-    st.markdown('<div class="section-label">Tipo de carga</div>', unsafe_allow_html=True)
+    tier_ativo = identificar_tier(codigo_cliente) if codigo_cliente else None
 
-    col1, col2 = st.columns(2)
-    with col1:
-        tipo_carga = st.selectbox(
-            "Tipo",
-            ["Carga Completa", "Complemento"],
+    if codigo_cliente and tier_ativo is None:
+        st.error("C\u00f3digo inv\u00e1lido. Verifique com seu consultor.")
+    elif tier_ativo:
+        badge_class = f"tier-badge-{tier_ativo.lower()}"
+        st.markdown(f'<span class="{badge_class}">{tier_ativo}</span>', unsafe_allow_html=True)
+
+    if tier_ativo:
+
+        # Cupom de desconto
+        st.markdown('<div class="section-label">Cupom de desconto</div>', unsafe_allow_html=True)
+        cupom_input = st.text_input(
+            "Cupom",
+            placeholder="Insira seu cupom (opcional)",
             label_visibility="collapsed"
         )
-    with col2:
-        percentual_complemento = 100
-        if tipo_carga == "Complemento":
-            percentual_complemento = st.slider("Espa\u00e7o utilizado (%)", 40, 100, 60)
+        cupom_dados = None
+        if cupom_input:
+            cupom_dados = validar_cupom(cupom_input)
+            if cupom_dados:
+                st.markdown(f'<span class="cupom-badge">{cupom_dados["descricao"]}</span>', unsafe_allow_html=True)
+            else:
+                st.caption("Cupom inv\u00e1lido ou expirado.")
+
+        # Veículo
+        st.markdown('<div class="section-label">Ve\u00edculo</div>', unsafe_allow_html=True)
+        opcoes_veiculo = list(VEICULOS_INFO.keys())
+        veiculo_selecionado = st.selectbox(
+            "Selecione",
+            opcoes_veiculo,
+            format_func=lambda v: f"{v}  \u2014  {VEICULOS_INFO[v]['peso']}  |  {VEICULOS_INFO[v]['volume']}  |  {VEICULOS_INFO[v]['pallets']} pallets",
+            label_visibility="collapsed"
+        )
+        st.caption(VEICULOS_INFO[veiculo_selecionado]["desc"])
+
+        # Tipo de carga
+        st.markdown('<div class="section-label">Tipo de carga</div>', unsafe_allow_html=True)
+        col1, col2 = st.columns(2)
+        with col1:
+            tipo_carga = st.selectbox("Tipo", ["Carga Completa", "Complemento"], label_visibility="collapsed")
+        with col2:
+            percentual_complemento = 100
+            if tipo_carga == "Complemento":
+                percentual_complemento = st.slider("Espa\u00e7o utilizado (%)", 40, 100, 60)
+            else:
+                st.caption("Ve\u00edculo exclusivo")
+
+        # Peso e Volume (cubagem)
+        st.markdown('<div class="section-label">Peso e volume da carga</div>', unsafe_allow_html=True)
+        col_peso, col_vol = st.columns(2)
+        with col_peso:
+            peso_real = st.number_input("Peso real (kg)", min_value=1.0, value=500.0, step=50.0)
+        with col_vol:
+            volume_carga = st.number_input("Volume (m\u00b3)", min_value=0.1, value=2.0, step=0.5)
+
+        peso_taxado, peso_cubado = calcular_peso_taxado(peso_real, volume_carga)
+        if peso_cubado > peso_real:
+            st.caption(f"Peso cubado: {peso_cubado:.0f} kg (volume \u00d7 300). Cobrado pelo volume.")
         else:
-            st.caption("Ve\u00edculo exclusivo")
+            st.caption(f"Peso real maior que cubado. Cobrado pelo peso.")
 
-    # ============================================================
-    # DISTÂNCIA E PARADAS
-    # ============================================================
-    st.markdown('<div class="section-label">Percurso</div>', unsafe_allow_html=True)
+        # Distância e Paradas
+        st.markdown('<div class="section-label">Percurso</div>', unsafe_allow_html=True)
+        col_km, col_paradas = st.columns(2)
+        with col_km:
+            km_ida = st.number_input("Dist\u00e2ncia ida (km)", min_value=1.0, max_value=1000.0, value=25.0, step=1.0)
+        with col_paradas:
+            n_paradas = st.number_input("Pontos de entrega", min_value=1, max_value=20, value=3, step=1)
 
-    col_km, col_paradas = st.columns(2)
-    with col_km:
-        km_total = st.number_input(
-            "Dist\u00e2ncia total (km)",
-            min_value=1.0,
-            max_value=500.0,
-            value=25.0,
-            step=1.0
-        )
-    with col_paradas:
-        n_paradas = st.number_input(
-            "Pontos de entrega",
-            min_value=1,
-            max_value=20,
-            value=3,
-            step=1
-        )
+        km_cobrado = calcular_km_cobrado(km_ida)
+        if km_ida > 50:
+            pct_retorno = 50 if km_ida <= 150 else 60
+            st.caption(f"KM cobrado: {km_cobrado:.0f} km (ida + {pct_retorno}% retorno)")
+        else:
+            st.caption(f"KM cobrado: {km_cobrado:.0f} km (somente ida)")
 
-    st.markdown('<span class="locked-badge">Roteirizador autom\u00e1tico \u2014 dispon\u00edvel em breve</span>', unsafe_allow_html=True)
+        st.markdown('<span class="locked-badge">Roteirizador autom\u00e1tico \u2014 dispon\u00edvel em breve</span>', unsafe_allow_html=True)
 
-    # ============================================================
-    # PERÍODO
-    # ============================================================
-    st.markdown('<div class="section-label">Per\u00edodo</div>', unsafe_allow_html=True)
+        # Período
+        st.markdown('<div class="section-label">Per\u00edodo</div>', unsafe_allow_html=True)
+        adicional = st.selectbox("Per\u00edodo", list(ADICIONAIS.keys()), label_visibility="collapsed")
 
-    adicional = st.selectbox(
-        "Per\u00edodo da entrega",
-        list(ADICIONAIS.keys()),
-        label_visibility="collapsed"
-    )
+        # Proteção
+        st.markdown('<div class="section-label">Prote\u00e7\u00e3o de carga</div>', unsafe_allow_html=True)
+        col_p1, col_p2 = st.columns([1, 2])
+        with col_p1:
+            protecao_ativa = st.toggle("Ativar prote\u00e7\u00e3o", value=True)
+        with col_p2:
+            valor_mercadoria = 0.0
+            if protecao_ativa:
+                valor_mercadoria = st.number_input("Valor da mercadoria (R$)", min_value=0.0, value=10000.0, step=1000.0, format="%.2f")
 
-    # ============================================================
-    # PROTEÇÃO DE CARGA
-    # ============================================================
-    st.markdown('<div class="section-label">Prote\u00e7\u00e3o de carga</div>', unsafe_allow_html=True)
+        if protecao_ativa and valor_mercadoria > 0:
+            vp = calcular_protecao(valor_mercadoria, tier_ativo)
+            st.caption(f"Prote\u00e7\u00e3o: R$ {vp:.2f}")
 
-    col_p1, col_p2 = st.columns([1, 2])
-    with col_p1:
-        protecao_ativa = st.toggle("Ativar prote\u00e7\u00e3o", value=True)
-    with col_p2:
-        valor_mercadoria = 0.0
-        if protecao_ativa:
-            valor_mercadoria = st.number_input(
-                "Valor da mercadoria (R$)",
-                min_value=0.0,
-                value=10000.0,
-                step=1000.0,
-                format="%.2f"
+        # Aviso de pedágio
+        st.markdown('<div class="info-box">Ped\u00e1gio, taxas de acesso e estadias n\u00e3o inclusos. Cobrados \u00e0 parte conforme percurso.</div>', unsafe_allow_html=True)
+
+        # Botão calcular
+        st.markdown("")
+        calcular = st.button("CALCULAR COTA\u00c7\u00c3O", use_container_width=True)
+
+        if calcular:
+            resultado = calcular_cotacao(
+                veiculo=veiculo_selecionado,
+                tier=tier_ativo,
+                km_ida=km_ida,
+                n_pontos=n_paradas,
+                tipo_carga=tipo_carga,
+                percentual_complemento=percentual_complemento,
+                protecao_ativa=protecao_ativa,
+                valor_mercadoria=valor_mercadoria,
+                adicional_selecionado=adicional,
+                cupom_dados=cupom_dados
             )
 
-    if protecao_ativa and valor_mercadoria > 0:
-        vp = calcular_protecao(valor_mercadoria, tier_ativo)
-        st.caption(f"Prote\u00e7\u00e3o adicional: R$ {vp:.2f}")
+            st.markdown(f"""
+            <div class="result-card">
+                <div class="result-label">VALOR DA COTA\u00c7\u00c3O</div>
+                <div class="result-total">R$ {resultado['total']:,.2f}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-    # ============================================================
-    # BOTÃO CALCULAR
-    # ============================================================
-    st.markdown("")
-    st.markdown("")
-    calcular = st.button("CALCULAR COTA\u00c7\u00c3O", use_container_width=True)
+            st.markdown(f"""
+            <div class="kpi-row">
+                <div class="kpi-item">
+                    <div class="kpi-item-label">KM cobrado</div>
+                    <div class="kpi-item-value">{resultado['km_cobrado']:.0f} km</div>
+                </div>
+                <div class="kpi-item">
+                    <div class="kpi-item-label">Paradas</div>
+                    <div class="kpi-item-value">{n_paradas}</div>
+                </div>
+                <div class="kpi-item">
+                    <div class="kpi-item-label">Ve\u00edculo</div>
+                    <div class="kpi-item-value">{veiculo_selecionado}</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
-    # ============================================================
-    # RESULTADO
-    # ============================================================
-    if calcular:
-        resultado = calcular_cotacao(
-            veiculo=veiculo_selecionado,
-            tier=tier_ativo,
-            km_total=km_total,
-            n_pontos=n_paradas,
-            tipo_carga=tipo_carga,
-            percentual_complemento=percentual_complemento,
-            protecao_ativa=protecao_ativa,
-            valor_mercadoria=valor_mercadoria,
-            adicional_selecionado=adicional
-        )
-
-        st.markdown(f"""
-        <div class="result-card">
-            <div class="result-label">VALOR DA COTA\u00c7\u00c3O</div>
-            <div class="result-total">R$ {resultado['total']:,.2f}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        # KPIs
-        st.markdown(f"""
-        <div class="kpi-row">
-            <div class="kpi-item">
-                <div class="kpi-item-label">Dist\u00e2ncia</div>
-                <div class="kpi-item-value">{km_total} km</div>
-            </div>
-            <div class="kpi-item">
-                <div class="kpi-item-label">Paradas</div>
-                <div class="kpi-item-value">{n_paradas}</div>
-            </div>
-            <div class="kpi-item">
-                <div class="kpi-item-label">Ve\u00edculo</div>
-                <div class="kpi-item-value">{veiculo_selecionado}</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        # Detalhamento
-        detalhes_html = f"""
-        <div class="breakdown-card">
-            <div class="breakdown-row">
-                <span class="breakdown-name">Taxa base ({veiculo_selecionado})</span>
-                <span class="breakdown-value">R$ {resultado['taxa_base']:.2f}</span>
-            </div>
-            <div class="breakdown-row">
-                <span class="breakdown-name">Quilometragem ({km_total} km \u00d7 R$ {PRECOS[tier_ativo][veiculo_selecionado]['valor_km']:.2f})</span>
-                <span class="breakdown-value">R$ {resultado['valor_km']:.2f}</span>
-            </div>
-            <div class="breakdown-row">
-                <span class="breakdown-name">Pontos de entrega ({n_paradas})</span>
-                <span class="breakdown-value">R$ {resultado['taxa_pontos']:.2f}</span>
-            </div>
-        """
-
-        if resultado['adicional'] > 0:
-            detalhes_html += f"""
-            <div class="breakdown-row">
-                <span class="breakdown-name">{adicional}</span>
-                <span class="breakdown-value">R$ {resultado['adicional']:.2f}</span>
-            </div>
+            # Detalhamento
+            detalhes_html = f"""
+            <div class="breakdown-card">
+                <div class="breakdown-row">
+                    <span class="breakdown-name">Taxa base ({veiculo_selecionado})</span>
+                    <span class="breakdown-value">R$ {resultado['taxa_base']:.2f}</span>
+                </div>
+                <div class="breakdown-row">
+                    <span class="breakdown-name">Quilometragem ({resultado['km_cobrado']:.0f} km \u00d7 R$ {PRECOS[tier_ativo][veiculo_selecionado]['valor_km']:.2f})</span>
+                    <span class="breakdown-value">R$ {resultado['valor_km']:.2f}</span>
+                </div>
+                <div class="breakdown-row">
+                    <span class="breakdown-name">Pontos de entrega ({n_paradas})</span>
+                    <span class="breakdown-value">R$ {resultado['taxa_pontos']:.2f}</span>
+                </div>
             """
 
-        if resultado['protecao'] > 0:
+            if resultado['adicional'] > 0:
+                detalhes_html += f"""
+                <div class="breakdown-row">
+                    <span class="breakdown-name">{adicional}</span>
+                    <span class="breakdown-value">R$ {resultado['adicional']:.2f}</span>
+                </div>
+                """
+
+            if resultado['protecao'] > 0:
+                detalhes_html += f"""
+                <div class="breakdown-row">
+                    <span class="breakdown-name">Prote\u00e7\u00e3o de carga</span>
+                    <span class="breakdown-value">R$ {resultado['protecao']:.2f}</span>
+                </div>
+                """
+
+            if resultado['desconto'] > 0:
+                detalhes_html += f"""
+                <div class="breakdown-row">
+                    <span class="breakdown-name">Desconto (cupom)</span>
+                    <span class="breakdown-value" style="color:#059669;">- R$ {resultado['desconto']:.2f}</span>
+                </div>
+                """
+
             detalhes_html += f"""
-            <div class="breakdown-row">
-                <span class="breakdown-name">Prote\u00e7\u00e3o de carga</span>
-                <span class="breakdown-value">R$ {resultado['protecao']:.2f}</span>
+                <div class="breakdown-total">
+                    <span class="breakdown-total-label">Total</span>
+                    <span class="breakdown-total-value">R$ {resultado['total']:,.2f}</span>
+                </div>
             </div>
             """
+            st.markdown(detalhes_html, unsafe_allow_html=True)
 
-        detalhes_html += f"""
-            <div class="breakdown-total">
-                <span class="breakdown-total-label">Total</span>
-                <span class="breakdown-total-value">R$ {resultado['total']:,.2f}</span>
-            </div>
-        </div>
-        """
-
-        st.markdown(detalhes_html, unsafe_allow_html=True)
-
-        # Texto para copiar
-        st.markdown("")
-        msg = f"""*TRANSFELOG | Cota\u00e7\u00e3o de Frete*
+            # Texto para copiar
+            st.markdown("")
+            msg = f"""*TRANSFELOG | Cota\u00e7\u00e3o de Frete*
 
 Ve\u00edculo: {veiculo_selecionado}
-Dist\u00e2ncia: {km_total} km
+Dist\u00e2ncia: {km_ida} km (cobrado: {resultado['km_cobrado']:.0f} km)
 Pontos de entrega: {n_paradas}
 Per\u00edodo: {adicional}
 {'Prote\u00e7\u00e3o de carga: Inclusa' if protecao_ativa else ''}
+{'Cupom aplicado: ' + cupom_dados['descricao'] if cupom_dados else ''}
 
 *TOTAL: R$ {resultado['total']:,.2f}*
+Ped\u00e1gio e taxas cobrados \u00e0 parte.
 
 Grupo Transfelog do Brasil
 transfelog.streamlit.app"""
 
-        st.text_area("Copiar cota\u00e7\u00e3o", msg, height=200, label_visibility="collapsed")
+            st.text_area("Copiar cota\u00e7\u00e3o", msg, height=220, label_visibility="collapsed")
 
-else:
-    if not codigo_cliente:
-        st.markdown("")
-        st.caption("Insira seu c\u00f3digo de acesso para calcular sua cota\u00e7\u00e3o.")
+    else:
+        if not codigo_cliente:
+            st.caption("Insira seu c\u00f3digo de acesso para calcular sua cota\u00e7\u00e3o.")
+
+
+# ============================================================
+# ABA 2 - CADASTRO DE MOTORISTA
+# ============================================================
+elif aba == "Cadastro de Motorista":
+
+    st.markdown('<div class="section-label">Cadastro para aprova\u00e7\u00e3o</div>', unsafe_allow_html=True)
+    st.caption("Preencha todos os campos e envie seus documentos. Ap\u00f3s an\u00e1lise, voc\u00ea receber\u00e1 seu acesso.")
+
+    st.markdown("")
+
+    # Dados pessoais
+    nome_completo = st.text_input("Nome completo")
+    endereco = st.text_input("Endere\u00e7o completo (rua, n\u00famero, bairro, cidade, estado)")
+    telefone = st.text_input("Telefone (WhatsApp)")
+    email = st.text_input("E-mail")
+
+    st.markdown('<div class="section-label">Ve\u00edculo</div>', unsafe_allow_html=True)
+
+    col_v1, col_v2 = st.columns(2)
+    with col_v1:
+        veiculo_motorista = st.selectbox(
+            "Tipo de ve\u00edculo",
+            list(VEICULOS_INFO.keys()),
+            format_func=lambda v: f"{v} ({VEICULOS_INFO[v]['peso']})",
+            key="veiculo_mot"
+        )
+    with col_v2:
+        placa = st.text_input("Placa do ve\u00edculo")
+
+    col_cap1, col_cap2 = st.columns(2)
+    with col_cap1:
+        capacidade_peso = st.number_input("Capacidade de peso (kg)", min_value=1, value=2000, step=100)
+    with col_cap2:
+        capacidade_volume = st.number_input("Capacidade de volume (m\u00b3)", min_value=1.0, value=18.0, step=1.0)
+
+    st.markdown('<div class="section-label">Valor desejado</div>', unsafe_allow_html=True)
+    valor_km_desejado = st.number_input(
+        "Quanto deseja receber por km (R$)",
+        min_value=1.0,
+        max_value=20.0,
+        value=5.00,
+        step=0.50,
+        help="Valor por km que voc\u00ea gostaria de receber. Sujeito a aprova\u00e7\u00e3o."
+    )
+
+    st.markdown('<div class="section-label">Disponibilidade</div>', unsafe_allow_html=True)
+    disponibilidade = st.multiselect(
+        "Dias dispon\u00edveis",
+        ["Segunda", "Ter\u00e7a", "Quarta", "Quinta", "Sexta", "S\u00e1bado", "Domingo"],
+        default=["Segunda", "Ter\u00e7a", "Quarta", "Quinta", "Sexta"]
+    )
+
+    horario = st.selectbox(
+        "Hor\u00e1rio de prefer\u00eancia",
+        ["Integral (08h - 20h)", "Manh\u00e3 (06h - 14h)", "Tarde (12h - 20h)", "Noturno (18h - 06h)", "Flex\u00edvel"]
+    )
+
+    st.markdown('<div class="section-label">Documentos (obrigat\u00f3rios)</div>', unsafe_allow_html=True)
+    st.caption("Envie fotos leg\u00edveis dos documentos abaixo.")
+
+    cnh_upload = st.file_uploader("CNH (frente e verso)", type=["png", "jpg", "jpeg", "pdf"], key="cnh")
+    doc_veiculo_upload = st.file_uploader("Documento do ve\u00edculo (CRLV)", type=["png", "jpg", "jpeg", "pdf"], key="doc_veic")
+    foto_veiculo = st.file_uploader("Foto do ve\u00edculo (opcional)", type=["png", "jpg", "jpeg"], key="foto_veic")
+
+    st.markdown("")
+
+    # Termos
+    aceite_termos = st.checkbox("Declaro que as informa\u00e7\u00f5es s\u00e3o verdadeiras e aceito os termos de parceria.")
+
+    st.markdown("")
+    enviar = st.button("ENVIAR CADASTRO PARA APROVA\u00c7\u00c3O", use_container_width=True)
+
+    if enviar:
+        campos_obrigatorios = [nome_completo, endereco, telefone, email, placa, cnh_upload, doc_veiculo_upload]
+        if not all(campos_obrigatorios):
+            st.error("Preencha todos os campos obrigat\u00f3rios e anexe CNH + documento do ve\u00edculo.")
+        elif not aceite_termos:
+            st.error("Voc\u00ea precisa aceitar os termos para enviar.")
+        elif len(disponibilidade) == 0:
+            st.error("Selecione ao menos um dia de disponibilidade.")
+        else:
+            st.markdown(f"""
+            <div class="success-box">
+                Cadastro enviado com sucesso! Seus documentos est\u00e3o em an\u00e1lise.<br>
+                Voc\u00ea receber\u00e1 uma resposta em at\u00e9 48 horas no e-mail: <b>{email}</b>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Resumo
+            st.markdown("")
+            st.caption("Resumo do cadastro:")
+            st.markdown(f"""
+| Campo | Informa\u00e7\u00e3o |
+|-------|------------|
+| Nome | {nome_completo} |
+| Ve\u00edculo | {veiculo_motorista} |
+| Placa | {placa} |
+| Capacidade | {capacidade_peso} kg / {capacidade_volume} m\u00b3 |
+| Valor/km desejado | R$ {valor_km_desejado:.2f} |
+| Disponibilidade | {', '.join(disponibilidade)} |
+| Hor\u00e1rio | {horario} |
+""")
+
 
 # ============================================================
 # FOOTER
@@ -683,4 +832,3 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.image("ChatGPT Image Jun 20, 2026, 04_01_07 PM(1).png", width=60)
