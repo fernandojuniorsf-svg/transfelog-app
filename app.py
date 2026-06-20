@@ -1,9 +1,9 @@
-Import streamlit as st
+import streamlit as st
 from datetime import datetime
 import base64
 import os
 import urllib.parse
-
+    
 try:
     import gspread
     from google.oauth2.service_account import Credentials
