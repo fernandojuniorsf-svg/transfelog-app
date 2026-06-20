@@ -4,8 +4,6 @@ import base64
 import os
 
 # ============================================================
-# CONFIGURAÇÃO DA PÁGINA
-# ============================================================
 st.set_page_config(
     page_title="Transfelog App",
     page_icon="T",
@@ -14,12 +12,11 @@ st.set_page_config(
 )
 
 # ============================================================
-# CSS - DESIGN MODERNO
+# CSS
 # ============================================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
     .stApp {
         background: linear-gradient(160deg, #f0f4f7 0%, #e8eef3 50%, #f5f8fa 100%);
         font-family: 'Inter', sans-serif;
@@ -46,7 +43,6 @@ st.markdown("""
         font-size: 1.8rem;
         font-weight: 700;
         margin: 0;
-        letter-spacing: -0.3px;
     }
     .app-header p {
         color: rgba(255,255,255,0.6);
@@ -155,18 +151,9 @@ st.markdown("""
         padding: 0.7rem 0;
         border-bottom: 1px solid #f5f5f5;
     }
-    .breakdown-row:last-child {
-        border-bottom: none;
-    }
-    .breakdown-name {
-        color: #4b5563;
-        font-size: 0.85rem;
-    }
-    .breakdown-value {
-        color: #1a2332;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
+    .breakdown-row:last-child { border-bottom: none; }
+    .breakdown-name { color: #4b5563; font-size: 0.85rem; }
+    .breakdown-value { color: #1a2332; font-size: 0.85rem; font-weight: 600; }
     .breakdown-total {
         display: flex;
         justify-content: space-between;
@@ -175,16 +162,8 @@ st.markdown("""
         margin-top: 0.5rem;
         border-top: 2px solid #4A9BA8;
     }
-    .breakdown-total-label {
-        color: #1a2332;
-        font-size: 0.9rem;
-        font-weight: 700;
-    }
-    .breakdown-total-value {
-        color: #4A9BA8;
-        font-size: 1.2rem;
-        font-weight: 800;
-    }
+    .breakdown-total-label { color: #1a2332; font-size: 0.9rem; font-weight: 700; }
+    .breakdown-total-value { color: #4A9BA8; font-size: 1.2rem; font-weight: 800; }
     .locked-badge {
         background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
         color: #9ca3af;
@@ -257,7 +236,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================
-# DADOS DE CONFIGURAÇÃO
+# DADOS
 # ============================================================
 
 CODIGOS_TIER = {
@@ -311,9 +290,9 @@ PRECOS = {
 }
 
 VEICULOS_INFO = {
-    "Moto": {"peso": "20 kg", "volume": "0,1 m\u00b3", "pallets": "-", "desc": "Documentos e pequenos volumes"},
-    "Carro": {"peso": "300 kg", "volume": "1 m\u00b3", "pallets": "-", "desc": "Urg\u00eancias e encomendas leves"},
-    "Fiorino": {"peso": "600 kg", "volume": "3,5 m\u00b3", "pallets": "2-3", "desc": "Entregas urbanas leves"},
+    "Moto": {"peso": "20 kg", "volume": "0,1 m\u00b3", "pallets": "", "desc": "Documentos e pequenos volumes"},
+    "Carro": {"peso": "300 kg", "volume": "1 m\u00b3", "pallets": "", "desc": "Urg\u00eancias e encomendas leves"},
+    "Fiorino": {"peso": "600 kg", "volume": "3,5 m\u00b3", "pallets": "", "desc": "Entregas urbanas leves"},
     "Van": {"peso": "1.500 kg", "volume": "12 m\u00b3", "pallets": "6", "desc": "E-commerce e cargas m\u00e9dias"},
     "VUC": {"peso": "2.000 kg", "volume": "18 m\u00b3", "pallets": "8", "desc": "Carga urbana (entra na ZMRC)"},
     "3/4": {"peso": "3.500 kg", "volume": "25 m\u00b3", "pallets": "10", "desc": "Distribui\u00e7\u00f5es regionais"},
@@ -326,7 +305,6 @@ PROTECAO = {
     "taxa_cliente_base": 0.0023,
     "taxa_cliente_plus": 0.0021,
     "taxa_cliente_premium": 0.0018,
-    "custo_seguradora": 0.0008,
     "valor_minimo": 5.00,
 }
 
@@ -347,6 +325,11 @@ REPASSE_MOTORISTA = {
 # ============================================================
 # FUNÇÕES
 # ============================================================
+
+def formatar_brl(valor):
+    """Formata valor em reais brasileiro: R$ 1.003,75"""
+    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
 
 def identificar_tier(codigo):
     return CODIGOS_TIER.get(codigo.strip(), None)
@@ -445,8 +428,17 @@ def calcular_cotacao(veiculo, tier, km_ida, n_pontos, tipo_carga,
     }
 
 
+def formato_veiculo(v):
+    """Formata nome do veículo no dropdown"""
+    info = VEICULOS_INFO[v]
+    texto = f"{v}  \u2014  {info['peso']}  |  {info['volume']}"
+    if info['pallets']:
+        texto += f"  |  {info['pallets']} pallets"
+    return texto
+
+
 # ============================================================
-# HEADER COM LOGO GRANDE
+# HEADER COM LOGO
 # ============================================================
 
 LOGO_FILENAME = "ChatGPT Image Jun 20, 2026, 04_01_07 PM(1).png"
@@ -477,13 +469,13 @@ aba = st.radio(
 )
 
 # ============================================================
-# ABA 1 - COTAÇÃO DE FRETE
+# ABA 1 - COTAÇÃO
 # ============================================================
 if aba == "Cota\u00e7\u00e3o de Frete":
 
     st.markdown('<div class="section-label">Acesso</div>', unsafe_allow_html=True)
     codigo_cliente = st.text_input(
-        "C\u00f3digo do cliente",
+        "C\u00f3digo",
         type="password",
         placeholder="Insira seu c\u00f3digo de acesso",
         label_visibility="collapsed"
@@ -501,11 +493,7 @@ if aba == "Cota\u00e7\u00e3o de Frete":
 
         # Cupom
         st.markdown('<div class="section-label">Cupom de desconto</div>', unsafe_allow_html=True)
-        cupom_input = st.text_input(
-            "Cupom",
-            placeholder="Insira seu cupom (opcional)",
-            label_visibility="collapsed"
-        )
+        cupom_input = st.text_input("Cupom", placeholder="Insira seu cupom (opcional)", label_visibility="collapsed")
         cupom_dados = None
         if cupom_input:
             cupom_dados = validar_cupom(cupom_input)
@@ -516,11 +504,10 @@ if aba == "Cota\u00e7\u00e3o de Frete":
 
         # Ve\u00edculo
         st.markdown('<div class="section-label">Ve\u00edculo</div>', unsafe_allow_html=True)
-        opcoes_veiculo = list(VEICULOS_INFO.keys())
         veiculo_selecionado = st.selectbox(
             "Selecione",
-            opcoes_veiculo,
-            format_func=lambda v: f"{v}  \u2014  {VEICULOS_INFO[v]['peso']}  |  {VEICULOS_INFO[v]['volume']}  |  {VEICULOS_INFO[v]['pallets']} pallets",
+            list(VEICULOS_INFO.keys()),
+            format_func=formato_veiculo,
             label_visibility="collapsed"
         )
         st.caption(VEICULOS_INFO[veiculo_selecionado]["desc"])
@@ -576,7 +563,7 @@ if aba == "Cota\u00e7\u00e3o de Frete":
         st.markdown('<div class="section-label">Prote\u00e7\u00e3o de carga</div>', unsafe_allow_html=True)
         col_p1, col_p2 = st.columns([1, 2])
         with col_p1:
-            protecao_ativa = st.toggle("Ativar prote\u00e7\u00e3o", value=True)
+            protecao_ativa = st.toggle("Ativar", value=True)
         with col_p2:
             valor_mercadoria = 0.0
             if protecao_ativa:
@@ -584,7 +571,7 @@ if aba == "Cota\u00e7\u00e3o de Frete":
 
         if protecao_ativa and valor_mercadoria > 0:
             vp = calcular_protecao(valor_mercadoria, tier_ativo)
-            st.caption(f"Prote\u00e7\u00e3o: R$ {vp:.2f}")
+            st.caption(f"Prote\u00e7\u00e3o: {formatar_brl(vp)}")
 
         # Aviso
         st.markdown('<div class="info-box">Ped\u00e1gio, taxas de acesso e estadias n\u00e3o inclusos. Cobrados \u00e0 parte conforme percurso.</div>', unsafe_allow_html=True)
@@ -610,7 +597,7 @@ if aba == "Cota\u00e7\u00e3o de Frete":
             st.markdown(f"""
             <div class="result-card">
                 <div class="result-label">VALOR DA COTA\u00c7\u00c3O</div>
-                <div class="result-total">R$ {resultado['total']:,.2f}</div>
+                <div class="result-total">{formatar_brl(resultado['total'])}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -631,19 +618,21 @@ if aba == "Cota\u00e7\u00e3o de Frete":
             </div>
             """, unsafe_allow_html=True)
 
+            # Detalhamento
+            preco_km_unit = PRECOS[tier_ativo][veiculo_selecionado]['valor_km']
             detalhes_html = f"""
             <div class="breakdown-card">
                 <div class="breakdown-row">
                     <span class="breakdown-name">Taxa base ({veiculo_selecionado})</span>
-                    <span class="breakdown-value">R$ {resultado['taxa_base']:.2f}</span>
+                    <span class="breakdown-value">{formatar_brl(resultado['taxa_base'])}</span>
                 </div>
                 <div class="breakdown-row">
-                    <span class="breakdown-name">Quilometragem ({resultado['km_cobrado']:.0f} km \u00d7 R$ {PRECOS[tier_ativo][veiculo_selecionado]['valor_km']:.2f})</span>
-                    <span class="breakdown-value">R$ {resultado['valor_km']:.2f}</span>
+                    <span class="breakdown-name">Quilometragem ({resultado['km_cobrado']:.0f} km \u00d7 {formatar_brl(preco_km_unit)})</span>
+                    <span class="breakdown-value">{formatar_brl(resultado['valor_km'])}</span>
                 </div>
                 <div class="breakdown-row">
                     <span class="breakdown-name">Pontos de entrega ({n_paradas})</span>
-                    <span class="breakdown-value">R$ {resultado['taxa_pontos']:.2f}</span>
+                    <span class="breakdown-value">{formatar_brl(resultado['taxa_pontos'])}</span>
                 </div>
             """
 
@@ -651,7 +640,7 @@ if aba == "Cota\u00e7\u00e3o de Frete":
                 detalhes_html += f"""
                 <div class="breakdown-row">
                     <span class="breakdown-name">{adicional}</span>
-                    <span class="breakdown-value">R$ {resultado['adicional']:.2f}</span>
+                    <span class="breakdown-value">{formatar_brl(resultado['adicional'])}</span>
                 </div>
                 """
 
@@ -659,7 +648,7 @@ if aba == "Cota\u00e7\u00e3o de Frete":
                 detalhes_html += f"""
                 <div class="breakdown-row">
                     <span class="breakdown-name">Prote\u00e7\u00e3o de carga</span>
-                    <span class="breakdown-value">R$ {resultado['protecao']:.2f}</span>
+                    <span class="breakdown-value">{formatar_brl(resultado['protecao'])}</span>
                 </div>
                 """
 
@@ -667,19 +656,20 @@ if aba == "Cota\u00e7\u00e3o de Frete":
                 detalhes_html += f"""
                 <div class="breakdown-row">
                     <span class="breakdown-name">Desconto (cupom)</span>
-                    <span class="breakdown-value" style="color:#059669;">- R$ {resultado['desconto']:.2f}</span>
+                    <span class="breakdown-value" style="color:#059669;">- {formatar_brl(resultado['desconto'])}</span>
                 </div>
                 """
 
             detalhes_html += f"""
                 <div class="breakdown-total">
                     <span class="breakdown-total-label">Total</span>
-                    <span class="breakdown-total-value">R$ {resultado['total']:,.2f}</span>
+                    <span class="breakdown-total-value">{formatar_brl(resultado['total'])}</span>
                 </div>
             </div>
             """
             st.markdown(detalhes_html, unsafe_allow_html=True)
 
+            # Texto para copiar
             st.markdown("")
             msg = f"""*TRANSFELOG | Cota\u00e7\u00e3o de Frete*
 
@@ -690,7 +680,7 @@ Per\u00edodo: {adicional}
 {'Prote\u00e7\u00e3o de carga: Inclusa' if protecao_ativa else ''}
 {'Cupom: ' + cupom_dados['descricao'] if cupom_dados else ''}
 
-*TOTAL: R$ {resultado['total']:,.2f}*
+*TOTAL: {formatar_brl(resultado['total'])}*
 Ped\u00e1gio e taxas cobrados \u00e0 parte.
 
 Grupo Transfelog do Brasil
@@ -760,7 +750,7 @@ elif aba == "Cadastro de Motorista":
     )
 
     st.markdown('<div class="section-label">Documentos</div>', unsafe_allow_html=True)
-    st.caption("Envie fotos leg\u00edveis. Formatos aceitos: PNG, JPG ou PDF.")
+    st.caption("Envie fotos leg\u00edveis. Formatos: PNG, JPG ou PDF.")
 
     cnh_upload = st.file_uploader("CNH (frente e verso)", type=["png", "jpg", "jpeg", "pdf"], key="cnh")
     doc_veiculo_upload = st.file_uploader("Documento do ve\u00edculo (CRLV)", type=["png", "jpg", "jpeg", "pdf"], key="doc_veic")
