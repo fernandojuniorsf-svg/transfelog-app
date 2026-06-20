@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import datetime
 import base64
 import os
+import urllib.parse
 
 # ============================================================
 st.set_page_config(
@@ -202,6 +203,28 @@ st.markdown("""
         display: inline-block;
         margin-left: 0.5rem;
     }
+    .whatsapp-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, #25D366, #128C7E);
+        color: white;
+        padding: 0.9rem 2rem;
+        border-radius: 14px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        text-align: center;
+        width: 100%;
+        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+    .whatsapp-btn:hover {
+        background: linear-gradient(135deg, #20bd5a, #0f7a6b);
+        box-shadow: 0 8px 28px rgba(37, 211, 102, 0.4);
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+    }
     .stButton > button {
         background: linear-gradient(135deg, #4A9BA8 0%, #3a7f8a 100%);
         color: white;
@@ -221,7 +244,7 @@ st.markdown("""
     .app-footer {
         text-align: center;
         color: #b0b8c4;
-        font-size: 0.72rem;
+        font-size: 0.68rem;
         margin-top: 3rem;
         padding: 1.5rem;
         border-top: 1px solid #e8eef3;
@@ -239,6 +262,8 @@ st.markdown("""
 # DADOS
 # ============================================================
 
+WHATSAPP_TRANSFELOG = "5511978178226"
+
 CODIGOS_TIER = {
     "15081996": "PREMIUM",
     "13092020": "PLUS",
@@ -246,9 +271,9 @@ CODIGOS_TIER = {
 }
 
 CUPONS_DESCONTO = {
-    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "2026-07-31"},
+    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
     "FRETE20": {"desconto_pct": 20, "descricao": "20% de desconto", "validade": "2026-07-15"},
-    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% inaugura\u00e7\u00e3o", "validade": "2026-08-31"},
+    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% inaugura\u00e7\u00e3o", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
 }
 
 FATOR_CUBAGEM = 300
@@ -301,13 +326,6 @@ VEICULOS_INFO = {
     "Carreta": {"peso": "27.000 kg", "volume": "90 m\u00b3", "pallets": "24-28", "desc": "Carga completa pesada"},
 }
 
-PROTECAO = {
-    "taxa_cliente_base": 0.0023,
-    "taxa_cliente_plus": 0.0021,
-    "taxa_cliente_premium": 0.0018,
-    "valor_minimo": 5.00,
-}
-
 ADICIONAIS = {
     "Hor\u00e1rio comercial": 0,
     "Hor\u00e1rio de pico": 0.15,
@@ -315,6 +333,10 @@ ADICIONAIS = {
     "S\u00e1bado": 0.20,
     "Domingo ou feriado": 0.30,
     "Zona de restri\u00e7\u00e3o (ZMRC)": 0.10,
+}
+
+PROTECAO = {
+    "valor_minimo": 5.00,
 }
 
 REPASSE_MOTORISTA = {
@@ -327,7 +349,6 @@ REPASSE_MOTORISTA = {
 # ============================================================
 
 def formatar_brl(valor):
-    """Formata valor em reais brasileiro: R$ 1.003,75"""
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
@@ -429,7 +450,6 @@ def calcular_cotacao(veiculo, tier, km_ida, n_pontos, tipo_carga,
 
 
 def formato_veiculo(v):
-    """Formata nome do veículo no dropdown"""
     info = VEICULOS_INFO[v]
     texto = f"{v}  \u2014  {info['peso']}  |  {info['volume']}"
     if info['pallets']:
@@ -453,7 +473,7 @@ st.markdown(f"""
 <div class="app-header">
     {logo_html}
     <h1>TRANSFELOG</h1>
-    <p>Grupo Transfelog do Brasil</p>
+    <p>Aplicativo do Grupo Transfelog do Brasil</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -576,7 +596,7 @@ if aba == "Cota\u00e7\u00e3o de Frete":
         # Aviso
         st.markdown('<div class="info-box">Ped\u00e1gio, taxas de acesso e estadias n\u00e3o inclusos. Cobrados \u00e0 parte conforme percurso.</div>', unsafe_allow_html=True)
 
-        # Bot\u00e3o
+        # Bot\u00e3o calcular
         st.markdown("")
         calcular = st.button("CALCULAR COTA\u00c7\u00c3O", use_container_width=True)
 
@@ -669,9 +689,35 @@ if aba == "Cota\u00e7\u00e3o de Frete":
             """
             st.markdown(detalhes_html, unsafe_allow_html=True)
 
+            # Botão SOLICITAR FRETE via WhatsApp
+            msg_whatsapp = f"""Ol\u00e1! Gostaria de solicitar um frete.
+
+*Cota\u00e7\u00e3o Transfelog App*
+Ve\u00edculo: {veiculo_selecionado}
+Dist\u00e2ncia: {km_ida} km (cobrado: {resultado['km_cobrado']:.0f} km)
+Pontos de entrega: {n_paradas}
+Per\u00edodo: {adicional}
+Tipo: {tipo_carga}
+{'Prote\u00e7\u00e3o de carga: Inclusa' if protecao_ativa else 'Prote\u00e7\u00e3o: N\u00e3o inclusa'}
+{'Cupom: ' + cupom_dados['descricao'] if cupom_dados else ''}
+
+*TOTAL: {formatar_brl(resultado['total'])}*
+Ped\u00e1gio e taxas cobrados \u00e0 parte.
+
+Gostaria de confirmar esta solicita\u00e7\u00e3o."""
+
+            url_whatsapp = f"https://wa.me/{WHATSAPP_TRANSFELOG}?text={urllib.parse.quote(msg_whatsapp)}"
+
+            st.markdown(f"""
+            <a href="{url_whatsapp}" target="_blank" class="whatsapp-btn">
+                SOLICITAR FRETE VIA WHATSAPP
+            </a>
+            """, unsafe_allow_html=True)
+
             # Texto para copiar
             st.markdown("")
-            msg = f"""*TRANSFELOG | Cota\u00e7\u00e3o de Frete*
+            st.caption("Ou copie a cota\u00e7\u00e3o:")
+            msg_copiar = f"""*TRANSFELOG | Cota\u00e7\u00e3o de Frete*
 
 Ve\u00edculo: {veiculo_selecionado}
 Dist\u00e2ncia: {km_ida} km (cobrado: {resultado['km_cobrado']:.0f} km)
@@ -683,10 +729,9 @@ Per\u00edodo: {adicional}
 *TOTAL: {formatar_brl(resultado['total'])}*
 Ped\u00e1gio e taxas cobrados \u00e0 parte.
 
-Grupo Transfelog do Brasil
 transfelog.streamlit.app"""
 
-            st.text_area("Copiar cota\u00e7\u00e3o", msg, height=220, label_visibility="collapsed")
+            st.text_area("Copiar", msg_copiar, height=200, label_visibility="collapsed")
 
     else:
         if not codigo_cliente:
@@ -706,7 +751,8 @@ elif aba == "Cadastro de Motorista":
     nome_completo = st.text_input("Nome completo")
     endereco = st.text_input("Endere\u00e7o completo (rua, n\u00famero, bairro, cidade, estado)")
     telefone = st.text_input("Telefone (WhatsApp)")
-    email = st.text_input("E-mail")
+    whatsapp_motorista = st.text_input("WhatsApp para contato r\u00e1pido", placeholder="Ex: 11 98765-4321")
+    email_motorista = st.text_input("E-mail")
 
     st.markdown('<div class="section-label">Ve\u00edculo</div>', unsafe_allow_html=True)
 
@@ -763,7 +809,7 @@ elif aba == "Cadastro de Motorista":
     enviar = st.button("ENVIAR CADASTRO", use_container_width=True)
 
     if enviar:
-        campos_obrigatorios = [nome_completo, endereco, telefone, email, placa, cnh_upload, doc_veiculo_upload]
+        campos_obrigatorios = [nome_completo, endereco, telefone, whatsapp_motorista, email_motorista, placa, cnh_upload, doc_veiculo_upload]
         if not all(campos_obrigatorios):
             st.error("Preencha todos os campos obrigat\u00f3rios e anexe CNH + CRLV.")
         elif not aceite_termos:
@@ -774,7 +820,7 @@ elif aba == "Cadastro de Motorista":
             st.markdown(f"""
             <div class="success-box">
                 Cadastro enviado com sucesso! Documentos em an\u00e1lise.<br>
-                Retorno em at\u00e9 48h no e-mail: <b>{email}</b>
+                Retorno em at\u00e9 48h no WhatsApp: <b>{whatsapp_motorista}</b>
             </div>
             """, unsafe_allow_html=True)
 
@@ -784,6 +830,7 @@ elif aba == "Cadastro de Motorista":
 | Campo | Informa\u00e7\u00e3o |
 |-------|------------|
 | Nome | {nome_completo} |
+| WhatsApp | {whatsapp_motorista} |
 | Ve\u00edculo | {veiculo_motorista} |
 | Placa | {placa} |
 | Capacidade | {capacidade_peso} kg / {capacidade_volume} m\u00b3 |
@@ -799,6 +846,6 @@ elif aba == "Cadastro de Motorista":
 # ============================================================
 st.markdown("""
 <div class="app-footer">
-    Transfelog App \u00b7 Grupo Transfelog do Brasil \u00b7 S\u00e3o Paulo e ABC Paulista
+    Desenvolvido por Grupo Transfelog do Brasil
 </div>
 """, unsafe_allow_html=True)
