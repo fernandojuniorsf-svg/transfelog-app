@@ -7,6 +7,9 @@ import urllib.parse
 try:
     import gspread
     from google.oauth2.service_account import Credentials
+    from googleapiclient.discovery import build
+    from googleapiclient.http import MediaIoBaseUpload
+    import io
     GSHEETS_DISPONIVEL = True
 except ImportError:
     GSHEETS_DISPONIVEL = False
@@ -247,20 +250,82 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+PASTA_DOCUMENTOS = "Transfelog - Documentos"
+
+
+def get_credentials():
+    creds_dict = dict(st.secrets["gcp_service_account"])
+    scopes = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
+    credentials = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+    return credentials
+
+
 def conectar_gsheets():
     if not GSHEETS_DISPONIVEL:
         return None
     try:
-        creds_dict = dict(st.secrets["gcp_service_account"])
-        scopes = [
-            "https://www.googleapis.com/auth/spreadsheets",
-            "https://www.googleapis.com/auth/drive"
-        ]
-        credentials = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+        credentials = get_credentials()
         client = gspread.authorize(credentials)
         return client
     except Exception:
         return None
+
+
+def get_drive_service():
+    if not GSHEETS_DISPONIVEL:
+        return None
+    try:
+        credentials = get_credentials()
+        service = build('drive', 'v3', credentials=credentials)
+        return service
+    except Exception:
+        return None
+
+
+def get_or_create_folder(service, folder_name):
+    query = f"name='{folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
+    results = service.files().list(q=query, spaces='drive', fields='files(id, name)').execute()
+    files = results.get('files', [])
+    if files:
+        return files[0]['id']
+    else:
+        file_metadata = {
+            'name': folder_name,
+            'mimeType': 'application/vnd.google-apps.folder'
+        }
+        folder = service.files().create(body=file_metadata, fields='id').execute()
+        return folder.get('id')
+
+
+def upload_file_to_drive(uploaded_file, nome_motorista, tipo_doc):
+    service = get_drive_service()
+    if service is None:
+        return ""
+    try:
+        folder_id = get_or_create_folder(service, PASTA_DOCUMENTOS)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        extensao = uploaded_file.name.split('.')[-1]
+        nome_arquivo = f"{nome_motorista}_{tipo_doc}_{timestamp}.{extensao}"
+        file_metadata = {
+            'name': nome_arquivo,
+            'parents': [folder_id]
+        }
+        media = MediaIoBaseUpload(
+            io.BytesIO(uploaded_file.getvalue()),
+            mimetype=uploaded_file.type,
+            resumable=True
+        )
+        file = service.files().create(
+            body=file_metadata,
+            media_body=media,
+            fields='id, webViewLink'
+        ).execute()
+        return file.get('webViewLink', '')
+    except Exception:
+        return ""
 
 
 def salvar_motorista_gsheets(dados):
@@ -298,9 +363,9 @@ CODIGOS_TIER = {
 }
 
 CUPONS_DESCONTO = {
-    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
+    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "2026-07-31"},
     "FRETE20": {"desconto_pct": 20, "descricao": "20% de desconto", "validade": "2026-07-15"},
-    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de inaugura\u00e7\u00e3o", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
+    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de inaugura\u00e7\u00e3o", "validade": "2026-08-31"},
 }
 
 FATOR_CUBAGEM = 300
@@ -747,29 +812,44 @@ elif aba == "Cadastro de Motorista":
         elif len(disponibilidade) == 0:
             st.error("Selecione ao menos um dia de disponibilidade.")
         else:
-            dados_motorista = [
-                datetime.now().strftime("%d/%m/%Y %H:%M"),
-                nome_completo,
-                cep_motorista,
-                endereco,
-                cidade_motorista,
-                estado_motorista,
-                telefone,
-                whatsapp_motorista,
-                email_motorista,
-                veiculo_motorista,
-                placa,
-                str(capacidade_peso),
-                str(capacidade_volume),
-                f"R$ {valor_km_desejado:.2f}",
-                ", ".join(disponibilidade),
-                horario,
-                "Pendente",
-            ]
-            sucesso_sheets = salvar_motorista_gsheets(dados_motorista)
+            with st.spinner("Enviando documentos..."):
+                link_cnh = ""
+                link_crlv = ""
+                link_foto = ""
+
+                if cnh_upload:
+                    link_cnh = upload_file_to_drive(cnh_upload, nome_completo, "CNH")
+                if doc_veiculo_upload:
+                    link_crlv = upload_file_to_drive(doc_veiculo_upload, nome_completo, "CRLV")
+                if foto_veiculo:
+                    link_foto = upload_file_to_drive(foto_veiculo, nome_completo, "FOTO_VEICULO")
+
+                dados_motorista = [
+                    datetime.now().strftime("%d/%m/%Y %H:%M"),
+                    nome_completo,
+                    cep_motorista,
+                    endereco,
+                    cidade_motorista,
+                    estado_motorista,
+                    telefone,
+                    whatsapp_motorista,
+                    email_motorista,
+                    veiculo_motorista,
+                    placa,
+                    str(capacidade_peso),
+                    str(capacidade_volume),
+                    f"R$ {valor_km_desejado:.2f}",
+                    ", ".join(disponibilidade),
+                    horario,
+                    "Pendente",
+                    link_cnh,
+                    link_crlv,
+                    link_foto,
+                ]
+                sucesso_sheets = salvar_motorista_gsheets(dados_motorista)
 
             if sucesso_sheets:
-                st.markdown(f'<div class="success-box">Cadastro enviado com sucesso! Documentos em an\u00e1lise.<br>Retorno em at\u00e9 48h no WhatsApp: <b>{whatsapp_motorista}</b></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="success-box">Cadastro enviado com sucesso! Documentos salvos.<br>Retorno em at\u00e9 48h no WhatsApp: <b>{whatsapp_motorista}</b></div>', unsafe_allow_html=True)
             else:
                 st.markdown(f'<div class="success-box">Cadastro registrado! Entraremos em contato pelo WhatsApp: <b>{whatsapp_motorista}</b></div>', unsafe_allow_html=True)
 
@@ -788,6 +868,9 @@ elif aba == "Cadastro de Motorista":
 | Valor/km desejado | R$ {valor_km_desejado:.2f} |
 | Disponibilidade | {', '.join(disponibilidade)} |
 | Hor\u00e1rio | {horario} |
+| CNH | {'Enviada' if link_cnh else 'Erro no envio'} |
+| CRLV | {'Enviado' if link_crlv else 'Erro no envio'} |
+| Foto ve\u00edculo | {'Enviada' if link_foto else 'N\u00e3o enviada'} |
 """
             st.markdown(resumo)
 
