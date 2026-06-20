@@ -30,10 +30,11 @@ st.markdown("""
         text-align: center;
     }
     .app-header img {
-        height: 150px;
+        height: 220px;
         border-radius: 0;
         object-fit: contain;
         margin-bottom: 0;
+        mix-blend-mode: screen;
     }
     .section-label {
         color: #1a2332;
@@ -249,7 +250,7 @@ CODIGOS_TIER = {
 CUPONS_DESCONTO = {
     "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "2026-07-31"},
     "FRETE20": {"desconto_pct": 20, "descricao": "20% de desconto", "validade": "2026-07-15"},
-    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% inaugura\u00e7\u00e3o", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
+    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% inaugura\u00e7\u00e3o", "validade": "2026-08-31"},
 }
 
 FATOR_CUBAGEM = 300
@@ -413,7 +414,7 @@ def formato_veiculo(v):
 
 
 # HEADER - LOGO GRANDE SEM TEXTO
-LOGO_FILENAME = "ChatGPT Image Jun 20, 2026, 04_01_07 PM(1).png"
+LOGO_FILENAME = "ChatGPT Image Jun 20, 2026, 07_39_44 PM.png"
 logo_html = ""
 if os.path.exists(LOGO_FILENAME):
     with open(LOGO_FILENAME, "rb") as f:
