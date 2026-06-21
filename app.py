@@ -451,7 +451,7 @@ def formato_veiculo(v):
 # ============================================================
 # HEADER
 # ============================================================
-LOGO_FILENAME = "Favicon.png"
+LOGO_FILENAME = "favicon2.png"
 logo_html = ""
 if os.path.exists(LOGO_FILENAME):
     with open(LOGO_FILENAME, "rb") as f:
