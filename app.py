@@ -451,7 +451,7 @@ def formato_veiculo(v):
 # ============================================================
 # HEADER
 # ============================================================
-LOGO_FILENAME = "ChatGPT Image Jun 20, 2026, 07_39_44 PM.png"
+LOGO_FILENAME = "Favicon.png"
 logo_html = ""
 if os.path.exists(LOGO_FILENAME):
     with open(LOGO_FILENAME, "rb") as f:
