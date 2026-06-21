@@ -1,4 +1,4 @@
-
+```python
 import streamlit as st
 from datetime import datetime
 import base64
@@ -19,12 +19,6 @@ try:
     GDRIVE_DISPONIVEL = True
 except ImportError:
     GDRIVE_DISPONIVEL = False
-
-try:
-    import requests
-    REQUESTS_DISPONIVEL = True
-except ImportError:
-    REQUESTS_DISPONIVEL = False
 
 st.set_page_config(page_title="Transfelog App", page_icon="T", layout="centered", initial_sidebar_state="collapsed")
 
@@ -55,19 +49,13 @@ st.markdown("""
 .breakdown-total-value{color:#4A9BA8;font-size:1.2rem;font-weight:800}
 .info-box{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:0.8rem 1rem;font-size:0.8rem;color:#92400e;margin:1rem 0}
 .success-box{background:#ecfdf5;border:1px solid #6ee7b7;border-radius:10px;padding:0.8rem 1rem;font-size:0.8rem;color:#065f46;margin:1rem 0}
+.dev-box{background:#f0f4ff;border:1px solid #bfdbfe;border-radius:10px;padding:0.8rem 1rem;font-size:0.8rem;color:#1e40af;margin:1rem 0}
 .cupom-badge{background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.72rem;font-weight:600;display:inline-block;margin-left:0.5rem}
 .whatsapp-btn{display:block;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff !important;padding:0.9rem 2rem;border-radius:14px;font-weight:600;font-size:1rem;text-decoration:none;text-align:center;width:100%;box-shadow:0 6px 20px rgba(37,211,102,0.3);margin-top:1rem}
 .whatsapp-btn:hover{background:linear-gradient(135deg,#20bd5a,#0f7a6b);color:#fff !important;text-decoration:none}
 .stButton>button{background:linear-gradient(135deg,#4A9BA8 0%,#3a7f8a 100%);color:#fff;border:none;border-radius:14px;padding:0.9rem 2.5rem;font-weight:600;font-size:1rem;box-shadow:0 6px 20px rgba(74,155,168,0.3)}
 .stButton>button:hover{background:linear-gradient(135deg,#3d8a96 0%,#2d7580 100%);box-shadow:0 8px 28px rgba(74,155,168,0.4)}
 .app-footer{text-align:center;color:#b0b8c4;font-size:0.68rem;margin-top:3rem;padding:1.5rem;border-top:1px solid #e8eef3}
-.route-item{background:#fff;border-radius:10px;padding:0.8rem 1rem;margin:0.4rem 0;border:1px solid #e5e7eb;font-size:0.85rem;display:flex;align-items:center}
-.route-number{background:linear-gradient(135deg,#4A9BA8,#3a7f8a);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;margin-right:0.8rem;flex-shrink:0}
-.endereco-valido{color:#059669;font-size:0.75rem;font-weight:500}
-.margem-card{background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%);border-radius:14px;padding:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,0.04);margin:1rem 0;border:1px solid #86efac}
-.margem-title{color:#166534;font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
-.margem-valor{color:#15803d;font-size:1.8rem;font-weight:800;margin:0.3rem 0}
-.margem-pct{color:#166534;font-size:0.85rem;font-weight:500}
 #MainMenu{visibility:hidden}
 footer{visibility:hidden}
 header{visibility:hidden}
@@ -77,6 +65,9 @@ header{visibility:hidden}
 </style>
 """, unsafe_allow_html=True)
 
+# ============================================================
+# CONSTANTES
+# ============================================================
 PASTA_DOCUMENTOS_ID = "1BZpEA9srVED0H5imA4_vMrxNpXlTGUeg"
 WHATSAPP_TRANSFELOG = "5511978178226"
 CODIGOS_TIER = {"15081996": "PREMIUM", "13092020": "PLUS", "06121990": "BASE"}
@@ -147,6 +138,9 @@ ADICIONAIS = {
 }
 
 
+# ============================================================
+# FUNCOES DE CONEXAO
+# ============================================================
 def get_credentials():
     creds_dict = dict(st.secrets["gcp_service_account"])
     scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
@@ -212,86 +206,9 @@ def salvar_cotacao_gsheets(dados):
         return False
 
 
-def get_maps_api_key():
-    try:
-        return st.secrets.get("GOOGLE_MAPS_API_KEY", "")
-    except Exception:
-        return ""
-
-
-def validar_endereco(endereco):
-    try:
-        api_key = get_maps_api_key()
-        if not api_key or not endereco:
-            return None
-        url = "https://maps.googleapis.com/maps/api/geocode/json"
-        params = {"address": endereco, "language": "pt-BR", "key": api_key}
-        response = requests.get(url, params=params)
-        data = response.json()
-        if data["status"] == "OK" and len(data["results"]) > 0:
-            return data["results"][0]["formatted_address"]
-        return None
-    except Exception:
-        return None
-
-
-def calcular_distancia_google(origem, destino):
-    try:
-        api_key = get_maps_api_key()
-        if not api_key:
-            return None
-        url = "https://maps.googleapis.com/maps/api/distancematrix/json"
-        params = {"origins": origem, "destinations": destino, "mode": "driving", "language": "pt-BR", "key": api_key}
-        response = requests.get(url, params=params)
-        data = response.json()
-        if data["status"] == "OK":
-            element = data["rows"][0]["elements"][0]
-            if element["status"] == "OK":
-                return round(element["distance"]["value"] / 1000, 1)
-        return None
-    except Exception:
-        return None
-
-
-def calcular_rota_otimizada(origem, destinos):
-    try:
-        api_key = get_maps_api_key()
-        if not api_key:
-            return None, None
-        destino_final = destinos[-1]
-        url = "https://maps.googleapis.com/maps/api/directions/json"
-        params = {"origin": origem, "destination": destino_final, "mode": "driving", "language": "pt-BR", "key": api_key}
-        if len(destinos) > 1:
-            waypoints = "|".join(destinos[:-1])
-            params["waypoints"] = f"optimize:true|{waypoints}"
-        response = requests.get(url, params=params)
-        data = response.json()
-        if data["status"] == "OK":
-            route = data["routes"][0]
-            distancia_total = sum(leg["distance"]["value"] for leg in route["legs"]) / 1000
-            ordem = route.get("waypoint_order", list(range(len(destinos) - 1)))
-            destinos_ordenados = [destinos[i] for i in ordem] + [destino_final]
-            return round(distancia_total, 1), destinos_ordenados
-        return None, None
-    except Exception:
-        return None, None
-
-
-def calcular_rota_manual(origem, destinos):
-    try:
-        todos = [origem] + destinos
-        total = 0
-        for i in range(len(todos) - 1):
-            dist = calcular_distancia_google(todos[i], todos[i + 1])
-            if dist:
-                total += dist
-            else:
-                return None
-        return round(total, 1)
-    except Exception:
-        return None
-
-
+# ============================================================
+# FUNCOES DE CALCULO
+# ============================================================
 def formatar_brl(valor):
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
@@ -380,6 +297,9 @@ def formato_veiculo(v):
     return texto
 
 
+# ============================================================
+# HEADER
+# ============================================================
 LOGO_FILENAME = "ChatGPT Image Jun 20, 2026, 07_39_44 PM.png"
 logo_html = ""
 if os.path.exists(LOGO_FILENAME):
@@ -389,10 +309,16 @@ if os.path.exists(LOGO_FILENAME):
 
 st.markdown(f'<div class="app-header">{logo_html}</div>', unsafe_allow_html=True)
 
+# ============================================================
+# MENU
+# ============================================================
 st.markdown("")
-aba = st.radio("Menu", ["Cota\u00e7\u00e3o de Frete", "Cadastro de Motorista"], horizontal=True, label_visibility="collapsed")
+aba = st.radio("Menu", ["Cota\u00e7\u00e3o de Frete", "Roteirizador", "Cadastro de Motorista"], horizontal=True, label_visibility="collapsed")
 st.markdown("")
 
+# ============================================================
+# ABA: COTACAO DE FRETE
+# ============================================================
 if aba == "Cota\u00e7\u00e3o de Frete":
 
     st.markdown('<div class="section-label">Acesso</div>', unsafe_allow_html=True)
@@ -443,107 +369,11 @@ if aba == "Cota\u00e7\u00e3o de Frete":
             st.caption(f"Cobrado pelo peso real ({peso_real:.0f} kg).")
 
         st.markdown('<div class="section-label">Percurso</div>', unsafe_allow_html=True)
-        modo_percurso = st.radio("Modo", ["Endere\u00e7o simples", "Roteirizar (m\u00faltiplos pontos)", "KM manual"], label_visibility="collapsed")
-
-        km_ida = 0.0
-        n_paradas = 1
-        endereco_origem = ""
-        endereco_destino = ""
-        destinos_lista_final = []
-
-        if modo_percurso == "KM manual":
+        col_km, col_par = st.columns(2)
+        with col_km:
             km_ida = st.number_input("Dist\u00e2ncia ida (km)", min_value=1.0, max_value=1000.0, value=25.0, step=1.0)
+        with col_par:
             n_paradas = st.number_input("Pontos de entrega", min_value=1, max_value=20, value=3, step=1)
-
-        elif modo_percurso == "Endere\u00e7o simples":
-            col_o, col_d = st.columns(2)
-            with col_o:
-                endereco_origem = st.text_input("Origem", placeholder="Rua, n\u00famero - Cidade, SP")
-            with col_d:
-                endereco_destino = st.text_input("Destino", placeholder="Rua, n\u00famero - Cidade, SP")
-            if endereco_origem:
-                end_val = validar_endereco(endereco_origem)
-                if end_val:
-                    st.markdown(f'<span class="endereco-valido">Origem confirmada: {end_val}</span>', unsafe_allow_html=True)
-            if endereco_destino:
-                end_val_d = validar_endereco(endereco_destino)
-                if end_val_d:
-                    st.markdown(f'<span class="endereco-valido">Destino confirmado: {end_val_d}</span>', unsafe_allow_html=True)
-            if endereco_origem and endereco_destino:
-                dist = calcular_distancia_google(endereco_origem, endereco_destino)
-                if dist:
-                    km_ida = dist
-                    st.markdown(f'<div class="success-box">Dist\u00e2ncia calculada: <b>{km_ida} km</b></div>', unsafe_allow_html=True)
-                else:
-                    st.warning("N\u00e3o foi poss\u00edvel calcular. Verifique os endere\u00e7os ou informe manualmente.")
-                    km_ida = st.number_input("Informe o KM manualmente", min_value=1.0, value=25.0, step=1.0, key="km_fb")
-            n_paradas = st.number_input("Pontos de entrega", min_value=1, max_value=20, value=1, step=1)
-
-        elif modo_percurso == "Roteirizar (m\u00faltiplos pontos)":
-            st.caption("Origem fixa + m\u00faltiplos destinos. Otimize pela menor dist\u00e2ncia ou mantenha a ordem.")
-            endereco_origem = st.text_input("Origem (fixo)", placeholder="Sede ou ponto de coleta", key="rot_orig")
-            if endereco_origem:
-                ev = validar_endereco(endereco_origem)
-                if ev:
-                    st.markdown(f'<span class="endereco-valido">Origem confirmada: {ev}</span>', unsafe_allow_html=True)
-            st.caption("Endere\u00e7os de entrega (um por linha):")
-            destinos_texto = st.text_area("Destinos", placeholder="Rua A, 100 - Diadema, SP\nAv. B, 200 - Santo Andr\u00e9, SP\nRua C, 300 - S\u00e3o Bernardo, SP", height=120, label_visibility="collapsed")
-            destinos_lista = [d.strip() for d in destinos_texto.split("\n") if d.strip()]
-            n_paradas = len(destinos_lista)
-            if n_paradas > 0:
-                st.caption(f"{n_paradas} ponto(s) de entrega identificados.")
-            modo_rota = st.radio("Modo da rota", ["Otimizar (menor KM)", "Manter ordem manual"], horizontal=True, label_visibility="collapsed")
-            if endereco_origem and n_paradas > 0:
-                if st.button("ROTEIRIZAR", use_container_width=True):
-                    with st.spinner("Calculando melhor rota..."):
-                        if modo_rota == "Otimizar (menor KM)" and n_paradas > 1:
-                            km_t, dest_opt = calcular_rota_otimizada(endereco_origem, destinos_lista)
-                            if km_t and dest_opt:
-                                st.session_state.rota_km = km_t
-                                st.session_state.rota_destinos = dest_opt
-                                st.session_state.rota_modo = "otimizada"
-                            else:
-                                st.error("Erro na otimiza\u00e7\u00e3o. Verifique os endere\u00e7os digitados.")
-                        else:
-                            km_t = calcular_rota_manual(endereco_origem, destinos_lista)
-                            if km_t:
-                                st.session_state.rota_km = km_t
-                                st.session_state.rota_destinos = destinos_lista
-                                st.session_state.rota_modo = "manual"
-                            else:
-                                st.error("Erro no c\u00e1lculo. Verifique os endere\u00e7os digitados.")
-
-            if "rota_km" in st.session_state:
-                km_ida = st.session_state.rota_km
-                destinos_lista_final = st.session_state.rota_destinos
-                n_paradas = len(destinos_lista_final)
-                modo_txt = "Rota otimizada" if st.session_state.rota_modo == "otimizada" else "Ordem manual"
-                st.markdown(f'<div class="success-box">{modo_txt}: <b>{km_ida} km</b> | {n_paradas} paradas</div>', unsafe_allow_html=True)
-
-                st.markdown('<div class="section-label">Ordem de entrega</div>', unsafe_allow_html=True)
-                for i, dest in enumerate(destinos_lista_final):
-                    st.markdown(f'<div class="route-item"><span class="route-number">{i+1}</span>{dest}</div>', unsafe_allow_html=True)
-
-                st.markdown("")
-                st.caption("Reordene se necess\u00e1rio:")
-                nova_ordem = st.text_area("Reordenar", value="\n".join(destinos_lista_final), height=100, label_visibility="collapsed", key="reord")
-                if st.button("RECALCULAR ROTA", use_container_width=True):
-                    nova_lista = [d.strip() for d in nova_ordem.split("\n") if d.strip()]
-                    if nova_lista:
-                        with st.spinner("Recalculando dist\u00e2ncia..."):
-                            novo_km = calcular_rota_manual(endereco_origem, nova_lista)
-                            if novo_km:
-                                st.session_state.rota_km = novo_km
-                                st.session_state.rota_destinos = nova_lista
-                                st.session_state.rota_modo = "manual"
-                                st.rerun()
-
-                st.markdown('<div class="section-label">Pronto para Lalamove</div>', unsafe_allow_html=True)
-                texto_lala = f"ORIGEM:\n{endereco_origem}\n\nPARADAS:\n"
-                for i, d in enumerate(destinos_lista_final):
-                    texto_lala += f"{i+1}. {d}\n"
-                texto_lala += f"\nTOTAL: {km_ida} km | {n_paradas} paradas"
-                st.text_area("Copie e cole na Lalamove", texto_lala, height=150, label_visibility="collapsed", key="cp_lala")
 
         if km_ida > 0:
             km_cobrado = calcular_km_cobrado(km_ida)
@@ -552,6 +382,14 @@ if aba == "Cota\u00e7\u00e3o de Frete":
                 st.caption(f"KM cobrado: {km_cobrado:.0f} km (ida {km_ida:.0f} km + {pct}% retorno)")
             else:
                 st.caption(f"KM cobrado: {km_cobrado:.0f} km (somente ida, at\u00e9 50 km)")
+
+        st.markdown('<div class="section-label">Endere\u00e7os (opcional)</div>', unsafe_allow_html=True)
+        st.caption("Preencha para constar na solicita\u00e7\u00e3o via WhatsApp.")
+        col_o, col_d = st.columns(2)
+        with col_o:
+            endereco_origem = st.text_input("Origem", placeholder="Rua, n\u00famero - Cidade, SP")
+        with col_d:
+            endereco_destino = st.text_input("Destino", placeholder="Rua, n\u00famero - Cidade, SP")
 
         st.markdown('<div class="section-label">Per\u00edodo</div>', unsafe_allow_html=True)
         adicional = st.selectbox("Per\u00edodo", list(ADICIONAIS.keys()), label_visibility="collapsed")
@@ -632,6 +470,10 @@ if aba == "Cota\u00e7\u00e3o de Frete":
                     msg_wpp += f"Prote\u00e7\u00e3o: Sim ({formatar_brl(valor_mercadoria)})\n"
                 else:
                     msg_wpp += "Prote\u00e7\u00e3o: N\u00e3o\n"
+                if endereco_origem:
+                    msg_wpp += f"\nOrigem: {endereco_origem}\n"
+                if endereco_destino:
+                    msg_wpp += f"Destino: {endereco_destino}\n"
                 msg_wpp += f"\n*TOTAL: {formatar_brl(resultado['total'])}*\nPed\u00e1gio \u00e0 parte.\n\nConfirmar frete."
                 url_wpp = f"https://wa.me/{WHATSAPP_TRANSFELOG}?text={urllib.parse.quote(msg_wpp)}"
                 st.markdown(f'<a href="{url_wpp}" target="_blank" class="whatsapp-btn">SOLICITAR FRETE VIA WHATSAPP</a>', unsafe_allow_html=True)
@@ -640,6 +482,29 @@ if aba == "Cota\u00e7\u00e3o de Frete":
         if not codigo_cliente:
             st.caption("Insira seu c\u00f3digo de acesso para calcular.")
 
+# ============================================================
+# ABA: ROTEIRIZADOR (EM DESENVOLVIMENTO)
+# ============================================================
+elif aba == "Roteirizador":
+    st.markdown('<div class="section-label">Roteirizador inteligente</div>', unsafe_allow_html=True)
+    st.markdown('<div class="dev-box">Funcionalidade em desenvolvimento. Em breve voc\u00ea poder\u00e1 adicionar m\u00faltiplos endere\u00e7os, otimizar a rota pelo menor KM e calcular automaticamente a dist\u00e2ncia total com integra\u00e7\u00e3o Google Maps.</div>', unsafe_allow_html=True)
+    st.markdown("")
+    st.caption("Previs\u00e3o de lan\u00e7amento: V2 do Transfelog App")
+    st.markdown("")
+    st.markdown("**O que estar\u00e1 dispon\u00edvel:**")
+    st.markdown("- Endere\u00e7o de origem fixo (sua sede)")
+    st.markdown("- M\u00faltiplos pontos de entrega")
+    st.markdown("- Otimiza\u00e7\u00e3o autom\u00e1tica de rota (menor km)")
+    st.markdown("- Op\u00e7\u00e3o de manter ordem manual")
+    st.markdown("- C\u00e1lculo autom\u00e1tico de km total")
+    st.markdown("- Endere\u00e7os prontos para colar na Lalamove")
+    st.markdown("- Reordenar paradas manualmente")
+    st.markdown("")
+    st.caption("Por enquanto, use o modo KM manual na aba de Cota\u00e7\u00e3o.")
+
+# ============================================================
+# ABA: CADASTRO DE MOTORISTA
+# ============================================================
 elif aba == "Cadastro de Motorista":
 
     st.markdown('<div class="section-label">Cadastro para aprova\u00e7\u00e3o</div>', unsafe_allow_html=True)
@@ -757,5 +622,7 @@ elif aba == "Cadastro de Motorista":
             resumo = "| Campo | Informa\u00e7\u00e3o |\n|-------|------------|\n" + "\n".join(resumo_items)
             st.markdown(resumo)
 
+# ============================================================
+# FOOTER
+# ============================================================
 st.markdown('<div class="app-footer">Desenvolvido por Grupo Transfelog do Brasil</div>', unsafe_allow_html=True)
-
