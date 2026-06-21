@@ -24,7 +24,7 @@ st.set_page_config(page_title="Transfelog App", page_icon="favicon.png", layout=
 # ============================================================
 # LOGO BASE64
 # ============================================================
-LOGO_FILENAME = "ChatGPT Image Jun 20, 2026, 07_39_44 PM.png"
+LOGO_FILENAME = "Favicon2.png"
 logo_b64 = ""
 if os.path.exists(LOGO_FILENAME):
     with open(LOGO_FILENAME, "rb") as f:
