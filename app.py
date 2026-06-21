@@ -1,4 +1,4 @@
-
+```python
 import streamlit as st
 from datetime import datetime
 import base64
@@ -31,20 +31,11 @@ if os.path.exists(LOGO_FILENAME):
     with open(LOGO_FILENAME, "rb") as f:
         logo_b64 = base64.b64encode(f.read()).decode()
 
-favicon_b64 = ""
-if os.path.exists("favicon2.png"):
-    with open("favicon2.png", "rb") as f:
-        favicon_b64 = base64.b64encode(f.read()).decode()
-
 # ============================================================
-# META TAGS PARA IPHONE
+# META TAGS IPHONE
 # ============================================================
-apple_icon = ""
-if favicon_b64:
-    apple_icon = f'<link rel="apple-touch-icon" href="data:image/png;base64,{favicon_b64}">'
-
 st.markdown(f"""
-{apple_icon}
+<link rel="apple-touch-icon" href="data:image/png;base64,{logo_b64}">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Transfelog">
@@ -52,7 +43,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ============================================================
-# CSS PREMIUM
+# CSS
 # ============================================================
 CSS = """
 <style>
@@ -66,151 +57,151 @@ CSS = """
     --gray-50:#f8fafc;
     --gray-100:#f1f5f9;
     --gray-200:#e2e8f0;
-    --gray-300:#cbd5e1;
     --gray-400:#94a3b8;
     --gray-500:#64748b;
     --gray-600:#475569;
-    --gray-700:#334155;
-    --gray-900:#0f172a;
     --green:#10b981;
-    --red:#ef4444;
     --white:#ffffff;
     --radius:16px;
     --radius-sm:12px;
-    --shadow-sm:0 1px 2px rgba(0,0,0,0.04);
-    --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md:0 4px 6px -1px rgba(0,0,0,0.07),0 2px 4px -2px rgba(0,0,0,0.05);
-    --shadow-lg:0 10px 15px -3px rgba(0,0,0,0.08),0 4px 6px -4px rgba(0,0,0,0.04);
 }
 
 *{font-family:'Inter',sans-serif !important}
 .stApp{background:var(--gray-50)}
 
-.header-v3{
+/* HEADER */
+.app-header{
     background:linear-gradient(160deg,var(--dark) 0%,#1e3040 50%,var(--teal-dark) 100%);
-    padding:2.2rem 1.5rem;
-    border-radius:0 0 24px 24px;
+    padding:2.5rem 1rem 1.8rem;
+    border-radius:0 0 28px 28px;
     display:flex;
-    flex-direction:column;
     align-items:center;
     justify-content:center;
     margin:-1rem -1rem 0 -1rem;
-    box-shadow:0 4px 24px rgba(26,35,50,0.12);
+    box-shadow:0 4px 20px rgba(26,35,50,0.15);
 }
-.header-v3 img{
-    height:140px;
-    border-radius:0;
+.app-header img{
+    height:160px;
     object-fit:contain;
     mix-blend-mode:screen;
 }
 
+/* TAB MENU - COMPACTO */
+.tab-menu{
+    display:flex;
+    justify-content:center;
+    gap:0;
+    margin:1.2rem 0 0.5rem;
+    border-bottom:1px solid var(--gray-200);
+    padding-bottom:0;
+}
+.tab-item{
+    padding:0.55rem 1.2rem;
+    font-size:0.75rem;
+    font-weight:600;
+    color:var(--gray-400);
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+    transition:all 0.2s;
+    text-transform:uppercase;
+    letter-spacing:0.8px;
+}
+.tab-item.active{
+    color:var(--teal);
+    border-bottom:2px solid var(--teal);
+}
+
+/* SECTION LABEL */
 .sec-label{
     color:var(--gray-400);
-    font-size:0.68rem;
+    font-size:0.65rem;
     font-weight:600;
     text-transform:uppercase;
     letter-spacing:1.5px;
-    margin:2rem 0 0.5rem 0;
+    margin:1.8rem 0 0.4rem 0;
 }
 
-.card-v3{
-    background:var(--white);
-    border-radius:var(--radius);
-    padding:1.4rem;
-    box-shadow:var(--shadow);
-    border:1px solid var(--gray-100);
-    margin:0.7rem 0;
-}
-
-.result-v3{
+/* RESULTADO */
+.result-card{
     background:var(--white);
     border-radius:20px;
-    padding:2.2rem 1.5rem;
+    padding:2rem 1.5rem;
     text-align:center;
-    border:1.5px solid rgba(74,155,168,0.15);
-    box-shadow:0 8px 40px rgba(74,155,168,0.06);
+    border:1px solid rgba(74,155,168,0.12);
+    box-shadow:0 6px 30px rgba(74,155,168,0.05);
     margin:1.5rem 0;
     position:relative;
     overflow:hidden;
 }
-.result-v3::before{
-    content:'';
-    position:absolute;
-    top:0;left:0;right:0;
-    height:4px;
+.result-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:3px;
     background:linear-gradient(90deg,var(--teal),var(--teal-light));
 }
-.result-v3 .r-label{color:var(--gray-400);font-size:0.68rem;text-transform:uppercase;letter-spacing:2px;font-weight:600}
-.result-v3 .r-value{font-size:2.6rem;font-weight:900;color:var(--dark);margin:0.3rem 0;letter-spacing:-1.5px}
-.result-v3 .r-sub{color:var(--gray-500);font-size:0.78rem;font-weight:400}
+.result-card .label{color:var(--gray-400);font-size:0.65rem;text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.result-card .value{font-size:2.4rem;font-weight:900;color:var(--dark);margin:0.3rem 0;letter-spacing:-1.5px}
+.result-card .sub{color:var(--gray-500);font-size:0.75rem;font-weight:400}
 
-.badge-v3{display:inline-flex;align-items:center;padding:0.2rem 0.65rem;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:0.3px}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:0.15rem 0.6rem;border-radius:20px;font-size:0.65rem;font-weight:700;letter-spacing:0.3px}
 .badge-premium{background:#fef9c3;color:#a16207}
 .badge-plus{background:#ccfbf1;color:#0d9488}
 .badge-base{background:var(--gray-100);color:var(--gray-600)}
 .badge-cupom{background:#dcfce7;color:#166534}
 
-.kpi-row{display:flex;gap:0.5rem;margin:1rem 0}
-.kpi-item{flex:1;background:var(--gray-50);border-radius:var(--radius-sm);padding:0.8rem 0.5rem;text-align:center;border:1px solid var(--gray-100)}
-.kpi-item .num{font-size:1.1rem;font-weight:800;color:var(--dark);letter-spacing:-0.5px}
-.kpi-item .lbl{font-size:0.6rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;margin-top:3px}
+/* KPI */
+.kpi-row{display:flex;gap:0.4rem;margin:0.8rem 0}
+.kpi-box{flex:1;background:var(--gray-50);border-radius:10px;padding:0.6rem 0.4rem;text-align:center;border:1px solid var(--gray-100)}
+.kpi-box .n{font-size:1rem;font-weight:800;color:var(--dark)}
+.kpi-box .l{font-size:0.55rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px}
 
-.bk-container{background:var(--white);border-radius:var(--radius);padding:1.2rem;border:1px solid var(--gray-100);box-shadow:var(--shadow-sm)}
-.bk-line{display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--gray-50)}
-.bk-line:last-child{border-bottom:none}
-.bk-line .name{color:var(--gray-500);font-size:0.8rem;font-weight:400}
-.bk-line .val{color:var(--dark);font-size:0.8rem;font-weight:600}
-.bk-total-line{display:flex;justify-content:space-between;padding:0.8rem 0 0;margin-top:0.5rem;border-top:2px solid var(--teal)}
-.bk-total-line .name{font-weight:700;color:var(--dark);font-size:0.88rem}
-.bk-total-line .val{font-weight:800;color:var(--teal);font-size:1.1rem}
+/* BREAKDOWN */
+.bk{background:var(--white);border-radius:var(--radius);padding:1rem;border:1px solid var(--gray-100)}
+.bk-row{display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:1px solid var(--gray-50)}
+.bk-row:last-child{border-bottom:none}
+.bk-row .n{color:var(--gray-500);font-size:0.75rem}
+.bk-row .v{color:var(--dark);font-size:0.75rem;font-weight:600}
+.bk-total{display:flex;justify-content:space-between;padding:0.7rem 0 0;margin-top:0.4rem;border-top:2px solid var(--teal)}
+.bk-total .n{font-weight:700;color:var(--dark);font-size:0.85rem}
+.bk-total .v{font-weight:800;color:var(--teal);font-size:1rem}
 
-.alert-v3{border-radius:var(--radius-sm);padding:0.7rem 1rem;font-size:0.75rem;margin:0.7rem 0;line-height:1.5}
-.alert-info{background:#fefce8;border:1px solid #fde68a;color:#a16207}
-.alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
-.alert-dev{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+/* ALERTS */
+.alert{border-radius:10px;padding:0.6rem 0.8rem;font-size:0.72rem;margin:0.6rem 0;line-height:1.4}
+.alert-warn{background:#fefce8;border:1px solid #fde68a;color:#a16207}
+.alert-ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+.alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
 
-.wpp-v3{
-    display:block;
-    background:linear-gradient(135deg,#25D366 0%,#128C7E 100%);
-    color:#fff !important;
-    padding:0.95rem;
-    border-radius:14px;
-    font-weight:700;
-    font-size:0.88rem;
-    text-decoration:none;
-    text-align:center;
-    width:100%;
-    box-shadow:0 4px 16px rgba(37,211,102,0.2);
-    margin-top:1.2rem;
-    letter-spacing:0.2px;
+/* WHATSAPP */
+.wpp-btn{
+    display:block;background:linear-gradient(135deg,#25D366 0%,#128C7E 100%);
+    color:#fff !important;padding:0.8rem;border-radius:12px;font-weight:700;
+    font-size:0.82rem;text-decoration:none;text-align:center;width:100%;
+    box-shadow:0 3px 12px rgba(37,211,102,0.18);margin-top:1rem;
 }
-.wpp-v3:hover{opacity:0.9;color:#fff !important;text-decoration:none}
+.wpp-btn:hover{opacity:0.9;color:#fff !important;text-decoration:none}
 
+/* CARD */
+.info-card{background:var(--white);border-radius:var(--radius);padding:1.2rem;border:1px solid var(--gray-100);margin:0.6rem 0}
+
+/* STREAMLIT OVERRIDES */
 .stButton>button{
     background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%) !important;
-    color:#fff !important;
-    border:none !important;
-    border-radius:14px !important;
-    padding:0.85rem 2rem !important;
-    font-weight:700 !important;
-    font-size:0.85rem !important;
-    letter-spacing:0.2px;
-    box-shadow:0 4px 14px rgba(74,155,168,0.2);
-    transition:all 0.2s ease;
+    color:#fff !important;border:none !important;border-radius:12px !important;
+    padding:0.7rem 1.5rem !important;font-weight:700 !important;font-size:0.8rem !important;
+    box-shadow:0 3px 10px rgba(74,155,168,0.15);transition:all 0.2s;
 }
-.stButton>button:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(74,155,168,0.3)}
-.stSelectbox>div>div{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important}
-.stTextInput>div>div>input{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important;padding:0.6rem 0.8rem !important}
-.stNumberInput>div>div>input{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important}
-.stMultiSelect>div>div{border-radius:var(--radius-sm) !important}
-div[data-baseweb="select"]>div{border-radius:var(--radius-sm) !important}
+.stButton>button:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(74,155,168,0.25)}
+.stSelectbox>div>div{border-radius:10px !important;border-color:var(--gray-200) !important;font-size:0.82rem !important}
+.stTextInput>div>div>input{border-radius:10px !important;border-color:var(--gray-200) !important;font-size:0.82rem !important;padding:0.55rem 0.7rem !important}
+.stNumberInput>div>div>input{border-radius:10px !important;border-color:var(--gray-200) !important;font-size:0.82rem !important}
+.stMultiSelect>div>div{border-radius:10px !important}
+div[data-baseweb="select"]>div{border-radius:10px !important}
 
 #MainMenu{visibility:hidden}
 footer{visibility:hidden}
 header{visibility:hidden}
 .stDeployButton{display:none}
 
-.footer-v3{text-align:center;color:var(--gray-400);font-size:0.6rem;margin-top:3rem;padding:1rem 0;letter-spacing:0.5px;font-weight:500}
+.app-footer{text-align:center;color:var(--gray-400);font-size:0.58rem;margin-top:2.5rem;padding:0.8rem 0;letter-spacing:0.5px;font-weight:500}
 </style>
 """
 st.markdown(CSS, unsafe_allow_html=True)
@@ -222,9 +213,9 @@ PASTA_DOCUMENTOS_ID = "1BZpEA9srVED0H5imA4_vMrxNpXlTGUeg"
 WHATSAPP_TRANSFELOG = "5511978178226"
 CODIGOS_TIER = {"15081996": "PREMIUM", "13092020": "PLUS", "06121990": "BASE"}
 CUPONS_DESCONTO = {
-    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
+    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "2026-07-31"},
     "FRETE20": {"desconto_pct": 20, "descricao": "20% de desconto", "validade": "2026-07-15"},
-    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de desconto", "validade": "2026-08-31"},
+    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de desconto", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
 }
 FATOR_CUBAGEM = 300
 PROTECAO_MINIMO = 5.00
@@ -441,32 +432,43 @@ def formato_veiculo(v):
 
 
 # ============================================================
-# HEADER - LOGO GRANDE CENTRALIZADA
+# HEADER
 # ============================================================
-logo_img_html = ""
+logo_html = ""
 if logo_b64:
-    logo_img_html = f'<img src="data:image/png;base64,{logo_b64}">'
+    logo_html = f'<img src="data:image/png;base64,{logo_b64}">'
 
-st.markdown(f'<div class="header-v3">{logo_img_html}</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="app-header">{logo_html}</div>', unsafe_allow_html=True)
 
 # ============================================================
-# MENU - BOTOES (SEM BOLINHAS)
+# MENU TABS (COMPACTO - SEM BOTOES GRANDES)
 # ============================================================
-if "aba_ativa" not in st.session_state:
-    st.session_state.aba_ativa = "Cotacao"
+if "aba" not in st.session_state:
+    st.session_state.aba = "Cotacao"
 
-col_a, col_b, col_c = st.columns(3)
-with col_a:
-    if st.button("Cota\u00e7\u00e3o", use_container_width=True, key="btn_cot"):
-        st.session_state.aba_ativa = "Cotacao"
-with col_b:
-    if st.button("Roteirizador", use_container_width=True, key="btn_rot"):
-        st.session_state.aba_ativa = "Roteirizador"
-with col_c:
-    if st.button("Motorista", use_container_width=True, key="btn_mot"):
-        st.session_state.aba_ativa = "Motorista"
+abas = {"Cotacao": "COTA\u00c7\u00c3O", "Roteirizador": "ROTAS", "Motorista": "MOTORISTA"}
+tabs_html = '<div class="tab-menu">'
+for key, label in abas.items():
+    active = "active" if st.session_state.aba == key else ""
+    tabs_html += f'<div class="tab-item {active}">{label}</div>'
+tabs_html += '</div>'
+st.markdown(tabs_html, unsafe_allow_html=True)
 
-aba = st.session_state.aba_ativa
+col1, col2, col3 = st.columns(3)
+with col1:
+    if st.button("Cota\u00e7\u00e3o", key="t1", use_container_width=True):
+        st.session_state.aba = "Cotacao"
+        st.rerun()
+with col2:
+    if st.button("Rotas", key="t2", use_container_width=True):
+        st.session_state.aba = "Roteirizador"
+        st.rerun()
+with col3:
+    if st.button("Motorista", key="t3", use_container_width=True):
+        st.session_state.aba = "Motorista"
+        st.rerun()
+
+aba = st.session_state.aba
 
 # ============================================================
 # ABA: COTACAO
@@ -481,16 +483,16 @@ if aba == "Cotacao":
         st.error("C\u00f3digo inv\u00e1lido.")
     elif tier_ativo:
         badge_class = f"badge-{tier_ativo.lower()}"
-        st.markdown(f'<span class="badge-v3 {badge_class}">{tier_ativo}</span>', unsafe_allow_html=True)
+        st.markdown(f'<span class="badge {badge_class}">{tier_ativo}</span>', unsafe_allow_html=True)
 
     if tier_ativo:
 
-        st.markdown('<p class="sec-label">Cupom de desconto</p>', unsafe_allow_html=True)
+        st.markdown('<p class="sec-label">Cupom</p>', unsafe_allow_html=True)
         cupom_input = st.text_input("Cupom", placeholder="C\u00f3digo promocional (opcional)", label_visibility="collapsed")
         cupom_dados = validar_cupom(cupom_input) if cupom_input else None
         if cupom_input:
             if cupom_dados:
-                st.markdown(f'<span class="badge-v3 badge-cupom">{cupom_dados["descricao"]}</span>', unsafe_allow_html=True)
+                st.markdown(f'<span class="badge badge-cupom">{cupom_dados["descricao"]}</span>', unsafe_allow_html=True)
             else:
                 st.caption("Cupom inv\u00e1lido ou expirado.")
 
@@ -498,7 +500,7 @@ if aba == "Cotacao":
         veiculo_selecionado = st.selectbox("Veiculo", list(VEICULOS_INFO.keys()), format_func=formato_veiculo, label_visibility="collapsed")
         st.caption(VEICULOS_INFO[veiculo_selecionado]["desc"])
 
-        st.markdown('<p class="sec-label">Tipo de carga</p>', unsafe_allow_html=True)
+        st.markdown('<p class="sec-label">Carga</p>', unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         with col1:
             tipo_carga = st.selectbox("Tipo", ["Carga Completa", "Complemento"], label_visibility="collapsed")
@@ -509,16 +511,16 @@ if aba == "Cotacao":
             else:
                 st.caption("Exclusivo")
 
-        col_peso, col_vol = st.columns(2)
-        with col_peso:
+        col_p, col_v = st.columns(2)
+        with col_p:
             peso_real = st.number_input("Peso (kg)", min_value=1.0, value=500.0, step=50.0)
-        with col_vol:
+        with col_v:
             volume_carga = st.number_input("Volume (m\u00b3)", min_value=0.1, value=2.0, step=0.5)
         peso_taxado, peso_cubado = calcular_peso_taxado(peso_real, volume_carga)
         if peso_cubado > peso_real:
             st.caption(f"Cubado: {peso_cubado:.0f} kg \u2014 cobrado pelo volume.")
         else:
-            st.caption(f"Cobrado pelo peso real: {peso_real:.0f} kg")
+            st.caption(f"Peso real: {peso_real:.0f} kg")
 
         st.markdown('<p class="sec-label">Percurso</p>', unsafe_allow_html=True)
         col_km, col_par = st.columns(2)
@@ -531,9 +533,9 @@ if aba == "Cotacao":
             km_cobrado = calcular_km_cobrado(km_ida)
             if km_ida > 50:
                 pct = 50 if km_ida <= 150 else 60
-                st.caption(f"Total cobrado: {km_cobrado:.0f} km (ida + {pct}% retorno)")
+                st.caption(f"Cobrado: {km_cobrado:.0f} km (ida + {pct}% retorno)")
             else:
-                st.caption(f"Total: {km_cobrado:.0f} km (somente ida)")
+                st.caption(f"{km_cobrado:.0f} km (somente ida)")
 
         st.markdown('<p class="sec-label">Endere\u00e7os (opcional)</p>', unsafe_allow_html=True)
         col_o, col_d = st.columns(2)
@@ -548,17 +550,17 @@ if aba == "Cotacao":
             st.caption(f"+{int(ADICIONAIS[adicional]*100)}% sobre o subtotal")
 
         st.markdown('<p class="sec-label">Prote\u00e7\u00e3o de carga</p>', unsafe_allow_html=True)
-        col_p1, col_p2 = st.columns([1, 2])
-        with col_p1:
+        col_t, col_val = st.columns([1, 2])
+        with col_t:
             protecao_ativa = st.toggle("Ativar", value=True)
-        with col_p2:
+        with col_val:
             valor_mercadoria = 0.0
             if protecao_ativa:
-                valor_mercadoria = st.number_input("Valor da mercadoria (R$)", min_value=0.0, value=10000.0, step=1000.0, format="%.2f")
+                valor_mercadoria = st.number_input("Valor mercadoria (R$)", min_value=0.0, value=10000.0, step=1000.0, format="%.2f")
                 taxa_prot = {"PREMIUM": "0,18%", "PLUS": "0,21%", "BASE": "0,23%"}
-                st.caption(f"Taxa: {taxa_prot[tier_ativo]} \u2022 M\u00ednimo R$ 5,00")
+                st.caption(f"Taxa: {taxa_prot[tier_ativo]} \u2022 M\u00edn. R$ 5,00")
 
-        st.markdown('<div class="alert-v3 alert-info">Ped\u00e1gio, taxas de acesso, estadias e ajudantes cobrados \u00e0 parte.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="alert alert-warn">Ped\u00e1gio, taxas de acesso, estadias e ajudantes cobrados \u00e0 parte.</div>', unsafe_allow_html=True)
 
         st.markdown("")
         calcular = st.button("CALCULAR FRETE", use_container_width=True)
@@ -587,37 +589,37 @@ if aba == "Cotacao":
                 ]
                 salvar_cotacao_gsheets(dados_cotacao)
 
-                st.markdown(f'''<div class="result-v3">
-                    <div class="r-label">Valor do frete</div>
-                    <div class="r-value">{formatar_brl(resultado["total"])}</div>
-                    <div class="r-sub">{veiculo_selecionado} \u2022 {resultado["km_cobrado"]:.0f} km \u2022 {n_paradas} parada{"s" if n_paradas > 1 else ""}</div>
+                st.markdown(f'''<div class="result-card">
+                    <div class="label">Valor do frete</div>
+                    <div class="value">{formatar_brl(resultado["total"])}</div>
+                    <div class="sub">{veiculo_selecionado} \u2022 {resultado["km_cobrado"]:.0f} km \u2022 {n_paradas} parada{"s" if n_paradas > 1 else ""}</div>
                 </div>''', unsafe_allow_html=True)
 
                 st.markdown(f'''<div class="kpi-row">
-                    <div class="kpi-item"><div class="num">{resultado["km_cobrado"]:.0f}</div><div class="lbl">KM total</div></div>
-                    <div class="kpi-item"><div class="num">{n_paradas}</div><div class="lbl">Paradas</div></div>
-                    <div class="kpi-item"><div class="num">{veiculo_selecionado}</div><div class="lbl">Ve\u00edculo</div></div>
+                    <div class="kpi-box"><div class="n">{resultado["km_cobrado"]:.0f}</div><div class="l">KM</div></div>
+                    <div class="kpi-box"><div class="n">{n_paradas}</div><div class="l">Paradas</div></div>
+                    <div class="kpi-box"><div class="n">{veiculo_selecionado}</div><div class="l">Ve\u00edculo</div></div>
                 </div>''', unsafe_allow_html=True)
 
                 preco_km_unit = PRECOS[tier_ativo][veiculo_selecionado]['valor_km']
-                bk = '<div class="bk-container">'
-                bk += f'<div class="bk-line"><span class="name">Taxa base</span><span class="val">{formatar_brl(resultado["taxa_base"])}</span></div>'
-                bk += f'<div class="bk-line"><span class="name">KM ({resultado["km_cobrado"]:.0f} x {formatar_brl(preco_km_unit)})</span><span class="val">{formatar_brl(resultado["valor_km"])}</span></div>'
-                bk += f'<div class="bk-line"><span class="name">Paradas ({n_paradas}x)</span><span class="val">{formatar_brl(resultado["taxa_pontos"])}</span></div>'
+                bk = '<div class="bk">'
+                bk += f'<div class="bk-row"><span class="n">Taxa base</span><span class="v">{formatar_brl(resultado["taxa_base"])}</span></div>'
+                bk += f'<div class="bk-row"><span class="n">KM ({resultado["km_cobrado"]:.0f} x {formatar_brl(preco_km_unit)})</span><span class="v">{formatar_brl(resultado["valor_km"])}</span></div>'
+                bk += f'<div class="bk-row"><span class="n">Paradas ({n_paradas}x)</span><span class="v">{formatar_brl(resultado["taxa_pontos"])}</span></div>'
                 if tipo_carga == "Complemento":
-                    bk += f'<div class="bk-line"><span class="name">Complemento ({percentual_complemento}%)</span><span class="val">Aplicado</span></div>'
+                    bk += f'<div class="bk-row"><span class="n">Complemento ({percentual_complemento}%)</span><span class="v">Aplicado</span></div>'
                 if resultado['adicional'] > 0:
-                    bk += f'<div class="bk-line"><span class="name">{adicional}</span><span class="val">{formatar_brl(resultado["adicional"])}</span></div>'
+                    bk += f'<div class="bk-row"><span class="n">{adicional}</span><span class="v">{formatar_brl(resultado["adicional"])}</span></div>'
                 if resultado['protecao'] > 0:
-                    bk += f'<div class="bk-line"><span class="name">Prote\u00e7\u00e3o de carga</span><span class="val">{formatar_brl(resultado["protecao"])}</span></div>'
+                    bk += f'<div class="bk-row"><span class="n">Prote\u00e7\u00e3o de carga</span><span class="v">{formatar_brl(resultado["protecao"])}</span></div>'
                 if resultado['desconto'] > 0:
-                    bk += f'<div class="bk-line"><span class="name">Desconto cupom</span><span class="val" style="color:var(--green)">-{formatar_brl(resultado["desconto"])}</span></div>'
-                bk += f'<div class="bk-total-line"><span class="name">Total</span><span class="val">{formatar_brl(resultado["total"])}</span></div>'
+                    bk += f'<div class="bk-row"><span class="n">Desconto cupom</span><span class="v" style="color:var(--green)">-{formatar_brl(resultado["desconto"])}</span></div>'
+                bk += f'<div class="bk-total"><span class="n">Total</span><span class="v">{formatar_brl(resultado["total"])}</span></div>'
                 bk += '</div>'
                 st.markdown(bk, unsafe_allow_html=True)
 
                 if peso_cubado > peso_real:
-                    st.markdown(f'<div class="alert-v3 alert-info">Peso cubado ({peso_cubado:.0f} kg) maior que real ({peso_real:.0f} kg). Cobran\u00e7a pelo volume.</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="alert alert-warn">Peso cubado ({peso_cubado:.0f} kg) maior que real ({peso_real:.0f} kg). Cobran\u00e7a pelo volume.</div>', unsafe_allow_html=True)
 
                 msg_wpp = f"Ol\u00e1! Solicito frete.\n\n*Cota\u00e7\u00e3o Transfelog*\nVe\u00edculo: {veiculo_selecionado}\nDist\u00e2ncia: {km_ida} km (cobrado: {resultado['km_cobrado']:.0f} km)\nPontos: {n_paradas}\nPer\u00edodo: {adicional}\nTipo: {tipo_carga}\nPeso: {peso_taxado:.0f} kg\n"
                 if protecao_ativa:
@@ -630,7 +632,7 @@ if aba == "Cotacao":
                     msg_wpp += f"Destino: {endereco_destino}\n"
                 msg_wpp += f"\n*TOTAL: {formatar_brl(resultado['total'])}*\nPed\u00e1gio \u00e0 parte.\n\nConfirmar frete."
                 url_wpp = f"https://wa.me/{WHATSAPP_TRANSFELOG}?text={urllib.parse.quote(msg_wpp)}"
-                st.markdown(f'<a href="{url_wpp}" target="_blank" class="wpp-v3">SOLICITAR VIA WHATSAPP</a>', unsafe_allow_html=True)
+                st.markdown(f'<a href="{url_wpp}" target="_blank" class="wpp-btn">SOLICITAR VIA WHATSAPP</a>', unsafe_allow_html=True)
 
     else:
         if not codigo_cliente:
@@ -641,19 +643,18 @@ if aba == "Cotacao":
 # ABA: ROTEIRIZADOR
 # ============================================================
 elif aba == "Roteirizador":
-    st.markdown('<p class="sec-label">Roteirizador inteligente</p>', unsafe_allow_html=True)
-    st.markdown('<div class="alert-v3 alert-dev">Em desenvolvimento. Em breve: m\u00faltiplos endere\u00e7os, otimiza\u00e7\u00e3o de rota e c\u00e1lculo autom\u00e1tico.</div>', unsafe_allow_html=True)
-    st.markdown("")
-    st.markdown('<div class="card-v3">', unsafe_allow_html=True)
-    st.markdown("**Previs\u00e3o: Vers\u00e3o 2**")
+    st.markdown('<p class="sec-label">Roteirizador</p>', unsafe_allow_html=True)
+    st.markdown('<div class="alert alert-info">Em desenvolvimento. Previs\u00e3o: Vers\u00e3o 2.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="info-card">', unsafe_allow_html=True)
+    st.markdown("**Funcionalidades planejadas:**")
     st.markdown("")
     st.markdown("\u2022 Origem fixa + m\u00faltiplos destinos")
-    st.markdown("\u2022 Otimiza\u00e7\u00e3o autom\u00e1tica por menor km")
+    st.markdown("\u2022 Otimiza\u00e7\u00e3o por menor km")
     st.markdown("\u2022 Reordenar paradas manualmente")
-    st.markdown("\u2022 Endere\u00e7os prontos para Lalamove")
+    st.markdown("\u2022 Endere\u00e7os prontos para colar no Lalamove")
     st.markdown("\u2022 C\u00e1lculo integrado com Google Maps")
     st.markdown('</div>', unsafe_allow_html=True)
-    st.caption("Use o KM manual na aba Cota\u00e7\u00e3o por enquanto.")
+    st.caption("Use o KM manual na aba Cota\u00e7\u00e3o.")
 
 # ============================================================
 # ABA: MOTORISTA
@@ -662,7 +663,6 @@ elif aba == "Motorista":
 
     st.markdown('<p class="sec-label">Cadastro para aprova\u00e7\u00e3o</p>', unsafe_allow_html=True)
     st.caption("Retorno em at\u00e9 48h \u00fateis.")
-    st.markdown("")
 
     nome_completo = st.text_input("Nome completo")
 
@@ -689,7 +689,7 @@ elif aba == "Motorista":
     st.markdown('<p class="sec-label">Ve\u00edculo</p>', unsafe_allow_html=True)
     col_v1, col_v2 = st.columns(2)
     with col_v1:
-        veiculo_motorista = st.selectbox("Tipo de ve\u00edculo", list(VEICULOS_INFO.keys()), format_func=lambda v: f"{v} ({VEICULOS_INFO[v]['peso']})", key="veiculo_mot")
+        veiculo_motorista = st.selectbox("Tipo", list(VEICULOS_INFO.keys()), format_func=lambda v: f"{v} ({VEICULOS_INFO[v]['peso']})", key="veiculo_mot")
     with col_v2:
         placa = st.text_input("Placa", placeholder="ABC1D23")
     col_c1, col_c2 = st.columns(2)
@@ -700,17 +700,17 @@ elif aba == "Motorista":
     ano_veiculo = st.text_input("Ano do ve\u00edculo", placeholder="2020")
     possui_rastreador = st.radio("Possui rastreador?", ["Sim", "N\u00e3o"], horizontal=True)
 
-    st.markdown('<p class="sec-label">Valor por km desejado</p>', unsafe_allow_html=True)
+    st.markdown('<p class="sec-label">Valor por km</p>', unsafe_allow_html=True)
     valor_km_desejado = st.number_input("R$/km", min_value=1.0, max_value=20.0, value=5.00, step=0.50)
-    st.caption("R$ 3,00 a R$ 8,00/km \u2014 mais competitivo na regi\u00e3o.")
+    st.caption("R$ 3,00 a R$ 8,00/km \u2014 competitivo na regi\u00e3o.")
 
     st.markdown('<p class="sec-label">Disponibilidade</p>', unsafe_allow_html=True)
-    disponibilidade = st.multiselect("Dias dispon\u00edveis", ["Segunda", "Ter\u00e7a", "Quarta", "Quinta", "Sexta", "S\u00e1bado", "Domingo"], default=["Segunda", "Ter\u00e7a", "Quarta", "Quinta", "Sexta"])
+    disponibilidade = st.multiselect("Dias", ["Segunda", "Ter\u00e7a", "Quarta", "Quinta", "Sexta", "S\u00e1bado", "Domingo"], default=["Segunda", "Ter\u00e7a", "Quarta", "Quinta", "Sexta"])
     horario = st.selectbox("Hor\u00e1rio", ["Integral (08h \u00e0s 20h)", "Manh\u00e3 (06h \u00e0s 14h)", "Tarde (12h \u00e0s 20h)", "Noturno (18h \u00e0s 06h)", "Flex\u00edvel"])
     regiao_atuacao = st.text_input("Regi\u00e3o de atua\u00e7\u00e3o", placeholder="ABC Paulista, Grande SP...")
 
     st.markdown('<p class="sec-label">Documentos</p>', unsafe_allow_html=True)
-    st.caption("PNG, JPG ou PDF. Fotos leg\u00edveis.")
+    st.caption("PNG, JPG ou PDF.")
     cnh_upload = st.file_uploader("CNH (frente e verso)", type=["png", "jpg", "jpeg", "pdf"], key="cnh")
     doc_veiculo_upload = st.file_uploader("CRLV", type=["png", "jpg", "jpeg", "pdf"], key="doc_veic")
     foto_veiculo = st.file_uploader("Foto do ve\u00edculo (opcional)", type=["png", "jpg", "jpeg"], key="foto_veic")
@@ -727,7 +727,7 @@ elif aba == "Motorista":
         elif not aceite:
             st.error("Aceite os termos para continuar.")
         elif len(disponibilidade) == 0:
-            st.error("Selecione ao menos um dia de disponibilidade.")
+            st.error("Selecione ao menos um dia.")
         else:
             with st.spinner("Enviando cadastro..."):
                 link_cnh = upload_file_to_drive(cnh_upload, nome_completo, "CNH") if cnh_upload else ""
@@ -748,12 +748,11 @@ elif aba == "Motorista":
                 sucesso_sheets = salvar_motorista_gsheets(dados_motorista)
 
             if sucesso_sheets:
-                st.markdown(f'<div class="alert-v3 alert-success">Cadastro enviado com sucesso! Retorno em at\u00e9 48h no WhatsApp: <b>{whatsapp_motorista}</b></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="alert alert-ok">Cadastro enviado! Retorno em at\u00e9 48h no WhatsApp: <b>{whatsapp_motorista}</b></div>', unsafe_allow_html=True)
             else:
-                st.markdown(f'<div class="alert-v3 alert-success">Registrado! Contato pelo WhatsApp: <b>{whatsapp_motorista}</b></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="alert alert-ok">Registrado! Contato: <b>{whatsapp_motorista}</b></div>', unsafe_allow_html=True)
 
 # ============================================================
 # FOOTER
 # ============================================================
-st.markdown('<div class="footer-v3">Desenvolvido por Grupo Transfelog do Brasil</div>', unsafe_allow_html=True)
-
+st.markdown('<div class="app-footer">Desenvolvido por Grupo Transfelog do Brasil</div>', unsafe_allow_html=True)
