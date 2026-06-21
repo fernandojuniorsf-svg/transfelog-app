@@ -1,3 +1,4 @@
+```python
 import streamlit as st
 from datetime import datetime
 import base64
@@ -22,7 +23,7 @@ except ImportError:
 st.set_page_config(page_title="Transfelog App", page_icon="favicon.png", layout="centered", initial_sidebar_state="collapsed")
 
 # ============================================================
-# CSS PREMIUM + APPLE TOUCH ICON
+# LOGO BASE64
 # ============================================================
 LOGO_FILENAME = "ChatGPT Image Jun 20, 2026, 07_39_44 PM.png"
 logo_b64 = ""
@@ -35,25 +36,31 @@ if os.path.exists("favicon.png"):
     with open("favicon.png", "rb") as f:
         favicon_b64 = base64.b64encode(f.read()).decode()
 
-# APPLE TOUCH ICON para iPhone
-apple_icon_tag = ""
+# ============================================================
+# META TAGS PARA IPHONE (sem <head>)
+# ============================================================
+apple_icon = ""
 if favicon_b64:
-    apple_icon_tag = f'<link rel="apple-touch-icon" href="data:image/png;base64,{favicon_b64}">'
+    apple_icon = f'<link rel="apple-touch-icon" href="data:image/png;base64,{favicon_b64}">'
 elif logo_b64:
-    apple_icon_tag = f'<link rel="apple-touch-icon" href="data:image/png;base64,{logo_b64}">'
+    apple_icon = f'<link rel="apple-touch-icon" href="data:image/png;base64,{logo_b64}">'
 
 st.markdown(f"""
-<head>
-    {apple_icon_tag}
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Transfelog">
-    <meta name="theme-color" content="#1a2332">
-</head>
+{apple_icon}
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Transfelog">
+<meta name="theme-color" content="#1a2332">
+""", unsafe_allow_html=True)
+
+# ============================================================
+# CSS PREMIUM
+# ============================================================
+CSS = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-:root{{
+:root{
     --teal:#4A9BA8;
     --teal-light:#5fb8c7;
     --teal-dark:#2d7a85;
@@ -76,13 +83,12 @@ st.markdown(f"""
     --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
     --shadow-md:0 4px 6px -1px rgba(0,0,0,0.07),0 2px 4px -2px rgba(0,0,0,0.05);
     --shadow-lg:0 10px 15px -3px rgba(0,0,0,0.08),0 4px 6px -4px rgba(0,0,0,0.04);
-}}
+}
 
-*{{font-family:'Inter',sans-serif !important}}
-.stApp{{background:var(--gray-50)}}
+*{font-family:'Inter',sans-serif !important}
+.stApp{background:var(--gray-50)}
 
-/* HEADER - LOGO GRANDE CENTRALIZADA */
-.header-v3{{
+.header-v3{
     background:linear-gradient(160deg,var(--dark) 0%,#1e3040 50%,var(--teal-dark) 100%);
     padding:2.2rem 1.5rem;
     border-radius:0 0 24px 24px;
@@ -92,47 +98,33 @@ st.markdown(f"""
     justify-content:center;
     margin:-1rem -1rem 0 -1rem;
     box-shadow:0 4px 24px rgba(26,35,50,0.12);
-}}
-.header-v3 img{{
+}
+.header-v3 img{
     height:140px;
     border-radius:0;
     object-fit:contain;
     mix-blend-mode:screen;
-}}
+}
 
-/* SEGMENTED CONTROL */
-.seg-wrap{{
-    display:flex;
-    background:var(--gray-100);
-    border-radius:14px;
-    padding:4px;
-    margin:1.2rem 0;
-    border:1px solid var(--gray-200);
-    gap:4px;
-}}
-
-/* SECTION LABEL */
-.sec-label{{
+.sec-label{
     color:var(--gray-400);
     font-size:0.68rem;
     font-weight:600;
     text-transform:uppercase;
     letter-spacing:1.5px;
     margin:2rem 0 0.5rem 0;
-}}
+}
 
-/* CARDS */
-.card-v3{{
+.card-v3{
     background:var(--white);
     border-radius:var(--radius);
     padding:1.4rem;
     box-shadow:var(--shadow);
     border:1px solid var(--gray-100);
     margin:0.7rem 0;
-}}
+}
 
-/* RESULTADO */
-.result-v3{{
+.result-v3{
     background:var(--white);
     border-radius:20px;
     padding:2.2rem 1.5rem;
@@ -142,49 +134,44 @@ st.markdown(f"""
     margin:1.5rem 0;
     position:relative;
     overflow:hidden;
-}}
-.result-v3::before{{
+}
+.result-v3::before{
     content:'';
     position:absolute;
     top:0;left:0;right:0;
     height:4px;
     background:linear-gradient(90deg,var(--teal),var(--teal-light));
-}}
-.result-v3 .r-label{{color:var(--gray-400);font-size:0.68rem;text-transform:uppercase;letter-spacing:2px;font-weight:600}}
-.result-v3 .r-value{{font-size:2.6rem;font-weight:900;color:var(--dark);margin:0.3rem 0;letter-spacing:-1.5px}}
-.result-v3 .r-sub{{color:var(--gray-500);font-size:0.78rem;font-weight:400}}
+}
+.result-v3 .r-label{color:var(--gray-400);font-size:0.68rem;text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.result-v3 .r-value{font-size:2.6rem;font-weight:900;color:var(--dark);margin:0.3rem 0;letter-spacing:-1.5px}
+.result-v3 .r-sub{color:var(--gray-500);font-size:0.78rem;font-weight:400}
 
-/* BADGES */
-.badge-v3{{display:inline-flex;align-items:center;padding:0.2rem 0.65rem;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:0.3px}}
-.badge-premium{{background:#fef9c3;color:#a16207}}
-.badge-plus{{background:#ccfbf1;color:#0d9488}}
-.badge-base{{background:var(--gray-100);color:var(--gray-600)}}
-.badge-cupom{{background:#dcfce7;color:#166534}}
+.badge-v3{display:inline-flex;align-items:center;padding:0.2rem 0.65rem;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:0.3px}
+.badge-premium{background:#fef9c3;color:#a16207}
+.badge-plus{background:#ccfbf1;color:#0d9488}
+.badge-base{background:var(--gray-100);color:var(--gray-600)}
+.badge-cupom{background:#dcfce7;color:#166534}
 
-/* KPI GRID */
-.kpi-row{{display:flex;gap:0.5rem;margin:1rem 0}}
-.kpi-item{{flex:1;background:var(--gray-50);border-radius:var(--radius-sm);padding:0.8rem 0.5rem;text-align:center;border:1px solid var(--gray-100)}}
-.kpi-item .num{{font-size:1.1rem;font-weight:800;color:var(--dark);letter-spacing:-0.5px}}
-.kpi-item .lbl{{font-size:0.6rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;margin-top:3px}}
+.kpi-row{display:flex;gap:0.5rem;margin:1rem 0}
+.kpi-item{flex:1;background:var(--gray-50);border-radius:var(--radius-sm);padding:0.8rem 0.5rem;text-align:center;border:1px solid var(--gray-100)}
+.kpi-item .num{font-size:1.1rem;font-weight:800;color:var(--dark);letter-spacing:-0.5px}
+.kpi-item .lbl{font-size:0.6rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;margin-top:3px}
 
-/* BREAKDOWN */
-.bk-container{{background:var(--white);border-radius:var(--radius);padding:1.2rem;border:1px solid var(--gray-100);box-shadow:var(--shadow-sm)}}
-.bk-line{{display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--gray-50)}}
-.bk-line:last-child{{border-bottom:none}}
-.bk-line .name{{color:var(--gray-500);font-size:0.8rem;font-weight:400}}
-.bk-line .val{{color:var(--dark);font-size:0.8rem;font-weight:600}}
-.bk-total-line{{display:flex;justify-content:space-between;padding:0.8rem 0 0;margin-top:0.5rem;border-top:2px solid var(--teal)}}
-.bk-total-line .name{{font-weight:700;color:var(--dark);font-size:0.88rem}}
-.bk-total-line .val{{font-weight:800;color:var(--teal);font-size:1.1rem}}
+.bk-container{background:var(--white);border-radius:var(--radius);padding:1.2rem;border:1px solid var(--gray-100);box-shadow:var(--shadow-sm)}
+.bk-line{display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--gray-50)}
+.bk-line:last-child{border-bottom:none}
+.bk-line .name{color:var(--gray-500);font-size:0.8rem;font-weight:400}
+.bk-line .val{color:var(--dark);font-size:0.8rem;font-weight:600}
+.bk-total-line{display:flex;justify-content:space-between;padding:0.8rem 0 0;margin-top:0.5rem;border-top:2px solid var(--teal)}
+.bk-total-line .name{font-weight:700;color:var(--dark);font-size:0.88rem}
+.bk-total-line .val{font-weight:800;color:var(--teal);font-size:1.1rem}
 
-/* ALERTS */
-.alert-v3{{border-radius:var(--radius-sm);padding:0.7rem 1rem;font-size:0.75rem;margin:0.7rem 0;line-height:1.5}}
-.alert-info{{background:#fefce8;border:1px solid #fde68a;color:#a16207}}
-.alert-success{{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}}
-.alert-dev{{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}}
+.alert-v3{border-radius:var(--radius-sm);padding:0.7rem 1rem;font-size:0.75rem;margin:0.7rem 0;line-height:1.5}
+.alert-info{background:#fefce8;border:1px solid #fde68a;color:#a16207}
+.alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+.alert-dev{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
 
-/* WHATSAPP */
-.wpp-v3{{
+.wpp-v3{
     display:block;
     background:linear-gradient(135deg,#25D366 0%,#128C7E 100%);
     color:#fff !important;
@@ -198,11 +185,10 @@ st.markdown(f"""
     box-shadow:0 4px 16px rgba(37,211,102,0.2);
     margin-top:1.2rem;
     letter-spacing:0.2px;
-}}
-.wpp-v3:hover{{opacity:0.9;color:#fff !important;text-decoration:none}}
+}
+.wpp-v3:hover{opacity:0.9;color:#fff !important;text-decoration:none}
 
-/* STREAMLIT OVERRIDES */
-.stButton>button{{
+.stButton>button{
     background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%) !important;
     color:#fff !important;
     border:none !important;
@@ -213,23 +199,23 @@ st.markdown(f"""
     letter-spacing:0.2px;
     box-shadow:0 4px 14px rgba(74,155,168,0.2);
     transition:all 0.2s ease;
-}}
-.stButton>button:hover{{transform:translateY(-1px);box-shadow:0 6px 20px rgba(74,155,168,0.3)}}
-.stSelectbox>div>div{{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important}}
-.stTextInput>div>div>input{{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important;padding:0.6rem 0.8rem !important}}
-.stNumberInput>div>div>input{{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important}}
-.stMultiSelect>div>div{{border-radius:var(--radius-sm) !important}}
-div[data-baseweb="select"]>div{{border-radius:var(--radius-sm) !important}}
+}
+.stButton>button:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(74,155,168,0.3)}
+.stSelectbox>div>div{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important}
+.stTextInput>div>div>input{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important;padding:0.6rem 0.8rem !important}
+.stNumberInput>div>div>input{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important}
+.stMultiSelect>div>div{border-radius:var(--radius-sm) !important}
+div[data-baseweb="select"]>div{border-radius:var(--radius-sm) !important}
 
-/* HIDE STREAMLIT DEFAULTS */
-#MainMenu{{visibility:hidden}}
-footer{{visibility:hidden}}
-header{{visibility:hidden}}
-.stDeployButton{{display:none}}
+#MainMenu{visibility:hidden}
+footer{visibility:hidden}
+header{visibility:hidden}
+.stDeployButton{display:none}
 
-.footer-v3{{text-align:center;color:var(--gray-400);font-size:0.6rem;margin-top:3rem;padding:1rem 0;letter-spacing:0.5px;font-weight:500}}
+.footer-v3{text-align:center;color:var(--gray-400);font-size:0.6rem;margin-top:3rem;padding:1rem 0;letter-spacing:0.5px;font-weight:500}
 </style>
-""", unsafe_allow_html=True)
+"""
+st.markdown(CSS, unsafe_allow_html=True)
 
 # ============================================================
 # CONSTANTES
@@ -238,9 +224,9 @@ PASTA_DOCUMENTOS_ID = "1BZpEA9srVED0H5imA4_vMrxNpXlTGUeg"
 WHATSAPP_TRANSFELOG = "5511978178226"
 CODIGOS_TIER = {"15081996": "PREMIUM", "13092020": "PLUS", "06121990": "BASE"}
 CUPONS_DESCONTO = {
-    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "2026-07-31"},
+    "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
     "FRETE20": {"desconto_pct": 20, "descricao": "20% de desconto", "validade": "2026-07-15"},
-    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de desconto", "validade": "2026-08-31"},
+    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de desconto", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
 }
 FATOR_CUBAGEM = 300
 PROTECAO_MINIMO = 5.00
@@ -457,26 +443,24 @@ def formato_veiculo(v):
 
 
 # ============================================================
-# HEADER - LOGO GRANDE SEM MENU
+# HEADER - LOGO GRANDE CENTRALIZADA
 # ============================================================
 logo_img_html = ""
 if logo_b64:
     logo_img_html = f'<img src="data:image/png;base64,{logo_b64}">'
 
-st.markdown(f'''<div class="header-v3">
-    {logo_img_html}
-</div>''', unsafe_allow_html=True)
+st.markdown(f'<div class="header-v3">{logo_img_html}</div>', unsafe_allow_html=True)
 
 # ============================================================
-# MENU - BOTOES SEGMENTED (SEM BOLINHAS)
+# MENU - BOTOES (SEM BOLINHAS)
 # ============================================================
 if "aba_ativa" not in st.session_state:
-    st.session_state.aba_ativa = "Cota\u00e7\u00e3o"
+    st.session_state.aba_ativa = "Cotacao"
 
 col_a, col_b, col_c = st.columns(3)
 with col_a:
     if st.button("Cota\u00e7\u00e3o", use_container_width=True, key="btn_cot"):
-        st.session_state.aba_ativa = "Cota\u00e7\u00e3o"
+        st.session_state.aba_ativa = "Cotacao"
 with col_b:
     if st.button("Roteirizador", use_container_width=True, key="btn_rot"):
         st.session_state.aba_ativa = "Roteirizador"
@@ -489,10 +473,10 @@ aba = st.session_state.aba_ativa
 # ============================================================
 # ABA: COTACAO
 # ============================================================
-if aba == "Cota\u00e7\u00e3o":
+if aba == "Cotacao":
 
     st.markdown('<p class="sec-label">Acesso</p>', unsafe_allow_html=True)
-    codigo_cliente = st.text_input("C\u00f3digo", type="password", placeholder="Digite seu c\u00f3digo de acesso", label_visibility="collapsed")
+    codigo_cliente = st.text_input("Codigo", type="password", placeholder="Digite seu c\u00f3digo de acesso", label_visibility="collapsed")
     tier_ativo = identificar_tier(codigo_cliente) if codigo_cliente else None
 
     if codigo_cliente and tier_ativo is None:
@@ -513,7 +497,7 @@ if aba == "Cota\u00e7\u00e3o":
                 st.caption("Cupom inv\u00e1lido ou expirado.")
 
         st.markdown('<p class="sec-label">Ve\u00edculo</p>', unsafe_allow_html=True)
-        veiculo_selecionado = st.selectbox("Ve\u00edculo", list(VEICULOS_INFO.keys()), format_func=formato_veiculo, label_visibility="collapsed")
+        veiculo_selecionado = st.selectbox("Veiculo", list(VEICULOS_INFO.keys()), format_func=formato_veiculo, label_visibility="collapsed")
         st.caption(VEICULOS_INFO[veiculo_selecionado]["desc"])
 
         st.markdown('<p class="sec-label">Tipo de carga</p>', unsafe_allow_html=True)
@@ -561,7 +545,7 @@ if aba == "Cota\u00e7\u00e3o":
             endereco_destino = st.text_input("Destino", placeholder="Rua, n\u00ba - Cidade")
 
         st.markdown('<p class="sec-label">Per\u00edodo</p>', unsafe_allow_html=True)
-        adicional = st.selectbox("Per\u00edodo", list(ADICIONAIS.keys()), label_visibility="collapsed")
+        adicional = st.selectbox("Periodo", list(ADICIONAIS.keys()), label_visibility="collapsed")
         if ADICIONAIS[adicional] > 0:
             st.caption(f"+{int(ADICIONAIS[adicional]*100)}% sobre o subtotal")
 
