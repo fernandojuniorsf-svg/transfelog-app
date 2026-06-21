@@ -19,7 +19,7 @@ try:
 except ImportError:
     GDRIVE_DISPONIVEL = False
 
-st.set_page_config(page_title="Transfelog App", page_icon="favicon.png", layout="centered", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Transfelog App", page_icon="favicon2.png", layout="centered", initial_sidebar_state="collapsed")
 
 # ============================================================
 # LOGO BASE64
@@ -31,8 +31,8 @@ if os.path.exists(LOGO_FILENAME):
         logo_b64 = base64.b64encode(f.read()).decode()
 
 favicon_b64 = ""
-if os.path.exists("favicon.png"):
-    with open("favicon.png", "rb") as f:
+if os.path.exists("favicon2.png"):
+    with open("favicon2.png", "rb") as f:
         favicon_b64 = base64.b64encode(f.read()).decode()
 
 # ============================================================
