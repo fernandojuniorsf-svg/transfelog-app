@@ -496,7 +496,6 @@ elif aba == "Roteirizador":
     st.markdown("- Otimiza\u00e7\u00e3o autom\u00e1tica de rota (menor km)")
     st.markdown("- Op\u00e7\u00e3o de manter ordem manual")
     st.markdown("- C\u00e1lculo autom\u00e1tico de km total")
-    st.markdown("- Endere\u00e7os prontos para colar na Lalamove")
     st.markdown("- Reordenar paradas manualmente")
     st.markdown("")
     st.caption("Por enquanto, use o modo KM manual na aba de Cota\u00e7\u00e3o.")
