@@ -1096,4 +1096,89 @@ elif aba == "Cadastro de Motorista":
     st.caption("Envie fotos leg\u00edveis. Formatos: PNG, JPG ou PDF.")
 
     cnh_upload = st.file_uploader("CNH (frente e verso)", type=["png", "jpg", "jpeg", "pdf"], key="cnh")
-    doc_veiculo_upload = st.file_uploader("Documento do ve\u00edculo (CRLV)", type=["png", "jpg", "jpeg", "pdf"], key="doc_veic
+    doc_veiculo_upload = st.file_uploader("Documento do ve\u00edculo (CRLV)", type=["png", "jpg", "jpeg", "pdf"], key="doc_veic")
+    foto_veiculo = st.file_uploader("Foto do ve\u00edculo (opcional)", type=["png", "jpg", "jpeg"], key="foto_veic")
+
+    st.markdown("")
+    aceite_termos = st.checkbox("Declaro que as informa\u00e7\u00f5es s\u00e3o verdadeiras e aceito os termos de parceria.")
+
+    st.markdown("")
+    enviar = st.button("ENVIAR CADASTRO", use_container_width=True)
+
+    if enviar:
+        campos_obrigatorios = [nome_completo, cep_motorista, endereco, cidade_motorista, estado_motorista, telefone, whatsapp_motorista, email_motorista, placa, cnh_upload, doc_veiculo_upload]
+        if not all(campos_obrigatorios):
+            st.error("Preencha todos os campos obrigat\u00f3rios e anexe CNH + CRLV.")
+        elif not aceite_termos:
+            st.error("Aceite os termos para enviar.")
+        elif len(disponibilidade) == 0:
+            st.error("Selecione ao menos um dia de disponibilidade.")
+        else:
+            with st.spinner("Enviando documentos..."):
+                link_cnh = ""
+                link_crlv = ""
+                link_foto = ""
+
+                if cnh_upload:
+                    link_cnh = upload_file_to_drive(cnh_upload, nome_completo, "CNH")
+                if doc_veiculo_upload:
+                    link_crlv = upload_file_to_drive(doc_veiculo_upload, nome_completo, "CRLV")
+                if foto_veiculo:
+                    link_foto = upload_file_to_drive(foto_veiculo, nome_completo, "FOTO_VEICULO")
+
+                dados_motorista = [
+                    datetime.now().strftime("%d/%m/%Y %H:%M"),
+                    nome_completo,
+                    cep_motorista,
+                    endereco,
+                    cidade_motorista,
+                    estado_motorista,
+                    telefone,
+                    whatsapp_motorista,
+                    email_motorista,
+                    veiculo_motorista,
+                    placa,
+                    str(capacidade_peso),
+                    str(capacidade_volume),
+                    f"R$ {valor_km_desejado:.2f}",
+                    ", ".join(disponibilidade),
+                    horario,
+                    "Pendente",
+                    link_cnh,
+                    link_crlv,
+                    link_foto,
+                ]
+                sucesso_sheets = salvar_motorista_gsheets(dados_motorista)
+
+            if sucesso_sheets:
+                st.markdown(f'<div class="success-box">Cadastro enviado com sucesso! Documentos salvos.<br>Retorno em at\u00e9 48h no WhatsApp: <b>{whatsapp_motorista}</b></div>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div class="success-box">Cadastro registrado! Entraremos em contato pelo WhatsApp: <b>{whatsapp_motorista}</b></div>', unsafe_allow_html=True)
+
+            st.markdown("")
+            st.caption("Resumo:")
+            resumo = f"""
+| Campo | Informa\u00e7\u00e3o |
+|-------|------------|
+| Nome | {nome_completo} |
+| WhatsApp | {whatsapp_motorista} |
+| CEP | {cep_motorista} |
+| Endere\u00e7o | {endereco}, {cidade_motorista} - {estado_motorista} |
+| Ve\u00edculo | {veiculo_motorista} |
+| Placa | {placa} |
+| Capacidade | {capacidade_peso} kg / {capacidade_volume} m\u00b3 |
+| Valor/km desejado | R$ {valor_km_desejado:.2f} |
+| Disponibilidade | {', '.join(disponibilidade)} |
+| Hor\u00e1rio | {horario} |
+| CNH | {'Enviada' if link_cnh else 'Erro no envio'} |
+| CRLV | {'Enviado' if link_crlv else 'Erro no envio'} |
+| Foto ve\u00edculo | {'Enviada' if link_foto else 'N\u00e3o enviada'} |
+"""
+            st.markdown(resumo)
+
+
+st.markdown("""
+<div class="app-footer">
+    Desenvolvido por Grupo Transfelog do Brasil
+</div>
+""", unsafe_allow_html=True)
