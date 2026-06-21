@@ -1,3 +1,5 @@
+```python
+```python
 import streamlit as st
 from datetime import datetime
 import base64
@@ -22,13 +24,38 @@ except ImportError:
 st.set_page_config(page_title="Transfelog App", page_icon="favicon.png", layout="centered", initial_sidebar_state="collapsed")
 
 # ============================================================
-# CSS PREMIUM - ESTILO TOP 5
+# CSS PREMIUM + APPLE TOUCH ICON
 # ============================================================
-st.markdown("""
+LOGO_FILENAME = "ChatGPT Image Jun 20, 2026, 07_39_44 PM.png"
+logo_b64 = ""
+if os.path.exists(LOGO_FILENAME):
+    with open(LOGO_FILENAME, "rb") as f:
+        logo_b64 = base64.b64encode(f.read()).decode()
+
+favicon_b64 = ""
+if os.path.exists("favicon.png"):
+    with open("favicon.png", "rb") as f:
+        favicon_b64 = base64.b64encode(f.read()).decode()
+
+# APPLE TOUCH ICON para iPhone
+apple_icon_tag = ""
+if favicon_b64:
+    apple_icon_tag = f'<link rel="apple-touch-icon" href="data:image/png;base64,{favicon_b64}">'
+elif logo_b64:
+    apple_icon_tag = f'<link rel="apple-touch-icon" href="data:image/png;base64,{logo_b64}">'
+
+st.markdown(f"""
+<head>
+    {apple_icon_tag}
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Transfelog">
+    <meta name="theme-color" content="#1a2332">
+</head>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-:root{
+:root{{
     --teal:#4A9BA8;
     --teal-light:#5fb8c7;
     --teal-dark:#2d7a85;
@@ -51,77 +78,63 @@ st.markdown("""
     --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
     --shadow-md:0 4px 6px -1px rgba(0,0,0,0.07),0 2px 4px -2px rgba(0,0,0,0.05);
     --shadow-lg:0 10px 15px -3px rgba(0,0,0,0.08),0 4px 6px -4px rgba(0,0,0,0.04);
-}
+}}
 
-*{font-family:'Inter',sans-serif !important}
-.stApp{background:var(--gray-50)}
+*{{font-family:'Inter',sans-serif !important}}
+.stApp{{background:var(--gray-50)}}
 
-/* HEADER MINIMAL */
-.header-v3{
+/* HEADER - LOGO GRANDE CENTRALIZADA */
+.header-v3{{
     background:linear-gradient(160deg,var(--dark) 0%,#1e3040 50%,var(--teal-dark) 100%);
-    padding:1.4rem 1.2rem;
+    padding:2.2rem 1.5rem;
     border-radius:0 0 24px 24px;
     display:flex;
+    flex-direction:column;
     align-items:center;
-    gap:0.9rem;
+    justify-content:center;
     margin:-1rem -1rem 0 -1rem;
     box-shadow:0 4px 24px rgba(26,35,50,0.12);
-}
-.header-v3 img{height:48px;border-radius:10px;object-fit:contain}
-.header-v3 .title{color:var(--white);font-size:1.15rem;font-weight:700;letter-spacing:-0.3px}
-.header-v3 .sub{color:rgba(255,255,255,0.5);font-size:0.65rem;font-weight:400;letter-spacing:0.5px;margin-top:2px}
+}}
+.header-v3 img{{
+    height:140px;
+    border-radius:0;
+    object-fit:contain;
+    mix-blend-mode:screen;
+}}
 
-/* SEGMENTED CONTROL (substitui radio buttons) */
-.seg-control{
+/* SEGMENTED CONTROL */
+.seg-wrap{{
     display:flex;
     background:var(--gray-100);
     border-radius:14px;
     padding:4px;
     margin:1.2rem 0;
     border:1px solid var(--gray-200);
-}
-.seg-btn{
-    flex:1;
-    text-align:center;
-    padding:0.65rem 0;
-    border-radius:11px;
-    font-size:0.8rem;
-    font-weight:600;
-    color:var(--gray-500);
-    cursor:pointer;
-    transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
-    border:none;
-    background:transparent;
-    letter-spacing:-0.2px;
-}
-.seg-btn-active{
-    background:var(--white);
-    color:var(--dark);
-    box-shadow:var(--shadow-md);
-}
+    gap:4px;
+}}
 
 /* SECTION LABEL */
-.sec-label{
+.sec-label{{
     color:var(--gray-400);
     font-size:0.68rem;
     font-weight:600;
     text-transform:uppercase;
     letter-spacing:1.5px;
     margin:2rem 0 0.5rem 0;
-}
+}}
 
 /* CARDS */
-.card-v3{
+.card-v3{{
     background:var(--white);
     border-radius:var(--radius);
     padding:1.4rem;
     box-shadow:var(--shadow);
     border:1px solid var(--gray-100);
     margin:0.7rem 0;
-}
+}}
 
 /* RESULTADO */
-.result-v3{
+.result-v3{{
     background:var(--white);
     border-radius:20px;
     padding:2.2rem 1.5rem;
@@ -131,49 +144,49 @@ st.markdown("""
     margin:1.5rem 0;
     position:relative;
     overflow:hidden;
-}
-.result-v3::before{
+}}
+.result-v3::before{{
     content:'';
     position:absolute;
     top:0;left:0;right:0;
     height:4px;
     background:linear-gradient(90deg,var(--teal),var(--teal-light));
-}
-.result-v3 .r-label{color:var(--gray-400);font-size:0.68rem;text-transform:uppercase;letter-spacing:2px;font-weight:600}
-.result-v3 .r-value{font-size:2.6rem;font-weight:900;color:var(--dark);margin:0.3rem 0;letter-spacing:-1.5px}
-.result-v3 .r-sub{color:var(--gray-500);font-size:0.78rem;font-weight:400}
+}}
+.result-v3 .r-label{{color:var(--gray-400);font-size:0.68rem;text-transform:uppercase;letter-spacing:2px;font-weight:600}}
+.result-v3 .r-value{{font-size:2.6rem;font-weight:900;color:var(--dark);margin:0.3rem 0;letter-spacing:-1.5px}}
+.result-v3 .r-sub{{color:var(--gray-500);font-size:0.78rem;font-weight:400}}
 
 /* BADGES */
-.badge-v3{display:inline-flex;align-items:center;padding:0.2rem 0.65rem;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:0.3px}
-.badge-premium{background:#fef9c3;color:#a16207}
-.badge-plus{background:#ccfbf1;color:#0d9488}
-.badge-base{background:var(--gray-100);color:var(--gray-600)}
-.badge-cupom{background:#dcfce7;color:#166534}
+.badge-v3{{display:inline-flex;align-items:center;padding:0.2rem 0.65rem;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:0.3px}}
+.badge-premium{{background:#fef9c3;color:#a16207}}
+.badge-plus{{background:#ccfbf1;color:#0d9488}}
+.badge-base{{background:var(--gray-100);color:var(--gray-600)}}
+.badge-cupom{{background:#dcfce7;color:#166534}}
 
 /* KPI GRID */
-.kpi-row{display:flex;gap:0.5rem;margin:1rem 0}
-.kpi-item{flex:1;background:var(--gray-50);border-radius:var(--radius-sm);padding:0.8rem 0.5rem;text-align:center;border:1px solid var(--gray-100)}
-.kpi-item .num{font-size:1.1rem;font-weight:800;color:var(--dark);letter-spacing:-0.5px}
-.kpi-item .lbl{font-size:0.6rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;margin-top:3px}
+.kpi-row{{display:flex;gap:0.5rem;margin:1rem 0}}
+.kpi-item{{flex:1;background:var(--gray-50);border-radius:var(--radius-sm);padding:0.8rem 0.5rem;text-align:center;border:1px solid var(--gray-100)}}
+.kpi-item .num{{font-size:1.1rem;font-weight:800;color:var(--dark);letter-spacing:-0.5px}}
+.kpi-item .lbl{{font-size:0.6rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;margin-top:3px}}
 
 /* BREAKDOWN */
-.bk-container{background:var(--white);border-radius:var(--radius);padding:1.2rem;border:1px solid var(--gray-100);box-shadow:var(--shadow-sm)}
-.bk-line{display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--gray-50)}
-.bk-line:last-child{border-bottom:none}
-.bk-line .name{color:var(--gray-500);font-size:0.8rem;font-weight:400}
-.bk-line .val{color:var(--dark);font-size:0.8rem;font-weight:600}
-.bk-total-line{display:flex;justify-content:space-between;padding:0.8rem 0 0;margin-top:0.5rem;border-top:2px solid var(--teal)}
-.bk-total-line .name{font-weight:700;color:var(--dark);font-size:0.88rem}
-.bk-total-line .val{font-weight:800;color:var(--teal);font-size:1.1rem}
+.bk-container{{background:var(--white);border-radius:var(--radius);padding:1.2rem;border:1px solid var(--gray-100);box-shadow:var(--shadow-sm)}}
+.bk-line{{display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--gray-50)}}
+.bk-line:last-child{{border-bottom:none}}
+.bk-line .name{{color:var(--gray-500);font-size:0.8rem;font-weight:400}}
+.bk-line .val{{color:var(--dark);font-size:0.8rem;font-weight:600}}
+.bk-total-line{{display:flex;justify-content:space-between;padding:0.8rem 0 0;margin-top:0.5rem;border-top:2px solid var(--teal)}}
+.bk-total-line .name{{font-weight:700;color:var(--dark);font-size:0.88rem}}
+.bk-total-line .val{{font-weight:800;color:var(--teal);font-size:1.1rem}}
 
 /* ALERTS */
-.alert-v3{border-radius:var(--radius-sm);padding:0.7rem 1rem;font-size:0.75rem;margin:0.7rem 0;line-height:1.5}
-.alert-info{background:#fefce8;border:1px solid #fde68a;color:#a16207}
-.alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
-.alert-dev{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+.alert-v3{{border-radius:var(--radius-sm);padding:0.7rem 1rem;font-size:0.75rem;margin:0.7rem 0;line-height:1.5}}
+.alert-info{{background:#fefce8;border:1px solid #fde68a;color:#a16207}}
+.alert-success{{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}}
+.alert-dev{{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}}
 
 /* WHATSAPP */
-.wpp-v3{
+.wpp-v3{{
     display:block;
     background:linear-gradient(135deg,#25D366 0%,#128C7E 100%);
     color:#fff !important;
@@ -187,11 +200,11 @@ st.markdown("""
     box-shadow:0 4px 16px rgba(37,211,102,0.2);
     margin-top:1.2rem;
     letter-spacing:0.2px;
-}
-.wpp-v3:hover{opacity:0.9;color:#fff !important;text-decoration:none}
+}}
+.wpp-v3:hover{{opacity:0.9;color:#fff !important;text-decoration:none}}
 
 /* STREAMLIT OVERRIDES */
-.stButton>button{
+.stButton>button{{
     background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%) !important;
     color:#fff !important;
     border:none !important;
@@ -202,24 +215,21 @@ st.markdown("""
     letter-spacing:0.2px;
     box-shadow:0 4px 14px rgba(74,155,168,0.2);
     transition:all 0.2s ease;
-}
-.stButton>button:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(74,155,168,0.3)}
-.stSelectbox>div>div{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important}
-.stTextInput>div>div>input{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important;padding:0.6rem 0.8rem !important}
-.stNumberInput>div>div>input{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important}
-.stMultiSelect>div>div{border-radius:var(--radius-sm) !important}
-div[data-baseweb="select"]>div{border-radius:var(--radius-sm) !important}
+}}
+.stButton>button:hover{{transform:translateY(-1px);box-shadow:0 6px 20px rgba(74,155,168,0.3)}}
+.stSelectbox>div>div{{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important}}
+.stTextInput>div>div>input{{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important;padding:0.6rem 0.8rem !important}}
+.stNumberInput>div>div>input{{border-radius:var(--radius-sm) !important;border-color:var(--gray-200) !important;font-size:0.85rem !important}}
+.stMultiSelect>div>div{{border-radius:var(--radius-sm) !important}}
+div[data-baseweb="select"]>div{{border-radius:var(--radius-sm) !important}}
 
 /* HIDE STREAMLIT DEFAULTS */
-#MainMenu{visibility:hidden}
-footer{visibility:hidden}
-header{visibility:hidden}
-.stDeployButton{display:none}
+#MainMenu{{visibility:hidden}}
+footer{{visibility:hidden}}
+header{{visibility:hidden}}
+.stDeployButton{{display:none}}
 
-/* HIDE RADIO BUTTON LABELS */
-div[role="radiogroup"]{display:none !important}
-
-.footer-v3{text-align:center;color:var(--gray-400);font-size:0.6rem;margin-top:3rem;padding:1rem 0;letter-spacing:0.5px;font-weight:500}
+.footer-v3{{text-align:center;color:var(--gray-400);font-size:0.6rem;margin-top:3rem;padding:1rem 0;letter-spacing:0.5px;font-weight:500}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -449,25 +459,18 @@ def formato_veiculo(v):
 
 
 # ============================================================
-# HEADER
+# HEADER - LOGO GRANDE SEM MENU
 # ============================================================
-LOGO_FILENAME = "favicon2.png"
-logo_html = ""
-if os.path.exists(LOGO_FILENAME):
-    with open(LOGO_FILENAME, "rb") as f:
-        logo_b64 = base64.b64encode(f.read()).decode()
-    logo_html = f'<img src="data:image/png;base64,{logo_b64}">'
+logo_img_html = ""
+if logo_b64:
+    logo_img_html = f'<img src="data:image/png;base64,{logo_b64}">'
 
 st.markdown(f'''<div class="header-v3">
-    {logo_html}
-    <div>
-        <div class="title">Transfelog App</div>
-        <div class="sub">GRUPO TRANSFELOG DO BRASIL</div>
-    </div>
+    {logo_img_html}
 </div>''', unsafe_allow_html=True)
 
 # ============================================================
-# SEGMENTED CONTROL (MENU SEM BOLINHAS)
+# MENU - BOTOES SEGMENTED (SEM BOLINHAS)
 # ============================================================
 if "aba_ativa" not in st.session_state:
     st.session_state.aba_ativa = "Cota\u00e7\u00e3o"
