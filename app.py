@@ -1,3 +1,4 @@
+
 import streamlit as st
 from datetime import datetime
 import base64
@@ -24,7 +25,7 @@ st.set_page_config(page_title="Transfelog App", page_icon="favicon2.png", layout
 # ============================================================
 # LOGO BASE64
 # ============================================================
-LOGO_FILENAME = "Favicon2.png"
+LOGO_FILENAME = "favicon2.png"
 logo_b64 = ""
 if os.path.exists(LOGO_FILENAME):
     with open(LOGO_FILENAME, "rb") as f:
@@ -36,13 +37,11 @@ if os.path.exists("favicon2.png"):
         favicon_b64 = base64.b64encode(f.read()).decode()
 
 # ============================================================
-# META TAGS PARA IPHONE (sem <head>)
+# META TAGS PARA IPHONE
 # ============================================================
 apple_icon = ""
 if favicon_b64:
     apple_icon = f'<link rel="apple-touch-icon" href="data:image/png;base64,{favicon_b64}">'
-elif logo_b64:
-    apple_icon = f'<link rel="apple-touch-icon" href="data:image/png;base64,{logo_b64}">'
 
 st.markdown(f"""
 {apple_icon}
@@ -225,7 +224,7 @@ CODIGOS_TIER = {"15081996": "PREMIUM", "13092020": "PLUS", "06121990": "BASE"}
 CUPONS_DESCONTO = {
     "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
     "FRETE20": {"desconto_pct": 20, "descricao": "20% de desconto", "validade": "2026-07-15"},
-    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de desconto", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
+    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de desconto", "validade": "2026-08-31"},
 }
 FATOR_CUBAGEM = 300
 PROTECAO_MINIMO = 5.00
@@ -757,3 +756,4 @@ elif aba == "Motorista":
 # FOOTER
 # ============================================================
 st.markdown('<div class="footer-v3">Desenvolvido por Grupo Transfelog do Brasil</div>', unsafe_allow_html=True)
+
