@@ -1,3 +1,4 @@
+```python
 import streamlit as st
 from datetime import datetime
 import base64
@@ -68,10 +69,10 @@ CSS = """
 *{font-family:'Inter',sans-serif !important}
 .stApp{background:var(--gray-50)}
 
-/* HEADER */
+/* HEADER - LOGO BEM GRANDE */
 .app-header{
     background:linear-gradient(160deg,var(--dark) 0%,#1e3040 50%,var(--teal-dark) 100%);
-    padding:2.5rem 1rem 1.8rem;
+    padding:3rem 1rem 2.2rem;
     border-radius:0 0 28px 28px;
     display:flex;
     align-items:center;
@@ -80,44 +81,68 @@ CSS = """
     box-shadow:0 4px 20px rgba(26,35,50,0.15);
 }
 .app-header img{
-    height:160px;
+    height:180px;
     object-fit:contain;
     mix-blend-mode:screen;
 }
 
-/* TAB MENU - COMPACTO */
-.tab-menu{
-    display:flex;
-    justify-content:center;
-    gap:0;
-    margin:1.2rem 0 0.5rem;
-    border-bottom:1px solid var(--gray-200);
-    padding-bottom:0;
-}
-.tab-item{
-    padding:0.55rem 1.2rem;
-    font-size:0.75rem;
-    font-weight:600;
-    color:var(--gray-400);
-    cursor:pointer;
-    border-bottom:2px solid transparent;
-    transition:all 0.2s;
-    text-transform:uppercase;
+/* MENU TABS - FINO E CLEAN */
+.stButton>button{
+    background:transparent !important;
+    color:var(--gray-400) !important;
+    border:none !important;
+    border-bottom:2px solid transparent !important;
+    border-radius:0 !important;
+    padding:0.35rem 0.6rem !important;
+    font-weight:600 !important;
+    font-size:0.68rem !important;
     letter-spacing:0.8px;
+    text-transform:uppercase;
+    box-shadow:none !important;
+    transition:all 0.2s;
 }
-.tab-item.active{
-    color:var(--teal);
-    border-bottom:2px solid var(--teal);
+.stButton>button:hover{
+    color:var(--teal) !important;
+    border-bottom:2px solid var(--teal) !important;
+    transform:none !important;
+    box-shadow:none !important;
+    background:transparent !important;
+}
+.stButton>button:focus{
+    color:var(--teal) !important;
+    box-shadow:none !important;
+    background:transparent !important;
+}
+
+/* BOTAO CALCULAR (override especifico) */
+.calc-btn button{
+    background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%) !important;
+    color:#fff !important;
+    border:none !important;
+    border-radius:12px !important;
+    padding:0.7rem 1.5rem !important;
+    font-weight:700 !important;
+    font-size:0.8rem !important;
+    letter-spacing:0.2px;
+    text-transform:none !important;
+    box-shadow:0 3px 10px rgba(74,155,168,0.15) !important;
+}
+.calc-btn button:hover{
+    transform:translateY(-1px) !important;
+    box-shadow:0 5px 16px rgba(74,155,168,0.25) !important;
+    border-bottom:none !important;
+    background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%) !important;
+    color:#fff !important;
 }
 
 /* SECTION LABEL */
 .sec-label{
     color:var(--gray-400);
-    font-size:0.65rem;
+    font-size:0.62rem;
     font-weight:600;
     text-transform:uppercase;
     letter-spacing:1.5px;
-    margin:1.8rem 0 0.4rem 0;
+    margin:1.6rem 0 0.3rem 0;
 }
 
 /* RESULTADO */
@@ -136,12 +161,12 @@ CSS = """
     content:'';position:absolute;top:0;left:0;right:0;height:3px;
     background:linear-gradient(90deg,var(--teal),var(--teal-light));
 }
-.result-card .label{color:var(--gray-400);font-size:0.65rem;text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.result-card .label{color:var(--gray-400);font-size:0.62rem;text-transform:uppercase;letter-spacing:2px;font-weight:600}
 .result-card .value{font-size:2.4rem;font-weight:900;color:var(--dark);margin:0.3rem 0;letter-spacing:-1.5px}
-.result-card .sub{color:var(--gray-500);font-size:0.75rem;font-weight:400}
+.result-card .sub{color:var(--gray-500);font-size:0.72rem;font-weight:400}
 
 /* BADGES */
-.badge{display:inline-flex;align-items:center;padding:0.15rem 0.6rem;border-radius:20px;font-size:0.65rem;font-weight:700;letter-spacing:0.3px}
+.badge{display:inline-flex;align-items:center;padding:0.15rem 0.55rem;border-radius:20px;font-size:0.62rem;font-weight:700;letter-spacing:0.3px}
 .badge-premium{background:#fef9c3;color:#a16207}
 .badge-plus{background:#ccfbf1;color:#0d9488}
 .badge-base{background:var(--gray-100);color:var(--gray-600)}
@@ -149,22 +174,22 @@ CSS = """
 
 /* KPI */
 .kpi-row{display:flex;gap:0.4rem;margin:0.8rem 0}
-.kpi-box{flex:1;background:var(--gray-50);border-radius:10px;padding:0.6rem 0.4rem;text-align:center;border:1px solid var(--gray-100)}
-.kpi-box .n{font-size:1rem;font-weight:800;color:var(--dark)}
-.kpi-box .l{font-size:0.55rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px}
+.kpi-box{flex:1;background:var(--gray-50);border-radius:10px;padding:0.55rem 0.3rem;text-align:center;border:1px solid var(--gray-100)}
+.kpi-box .n{font-size:0.95rem;font-weight:800;color:var(--dark)}
+.kpi-box .l{font-size:0.52rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px}
 
 /* BREAKDOWN */
 .bk{background:var(--white);border-radius:var(--radius);padding:1rem;border:1px solid var(--gray-100)}
-.bk-row{display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:1px solid var(--gray-50)}
+.bk-row{display:flex;justify-content:space-between;align-items:center;padding:0.45rem 0;border-bottom:1px solid var(--gray-50)}
 .bk-row:last-child{border-bottom:none}
-.bk-row .n{color:var(--gray-500);font-size:0.75rem}
-.bk-row .v{color:var(--dark);font-size:0.75rem;font-weight:600}
-.bk-total{display:flex;justify-content:space-between;padding:0.7rem 0 0;margin-top:0.4rem;border-top:2px solid var(--teal)}
-.bk-total .n{font-weight:700;color:var(--dark);font-size:0.85rem}
+.bk-row .n{color:var(--gray-500);font-size:0.72rem}
+.bk-row .v{color:var(--dark);font-size:0.72rem;font-weight:600}
+.bk-total{display:flex;justify-content:space-between;padding:0.6rem 0 0;margin-top:0.3rem;border-top:2px solid var(--teal)}
+.bk-total .n{font-weight:700;color:var(--dark);font-size:0.82rem}
 .bk-total .v{font-weight:800;color:var(--teal);font-size:1rem}
 
 /* ALERTS */
-.alert{border-radius:10px;padding:0.6rem 0.8rem;font-size:0.72rem;margin:0.6rem 0;line-height:1.4}
+.alert{border-radius:10px;padding:0.55rem 0.75rem;font-size:0.7rem;margin:0.5rem 0;line-height:1.4}
 .alert-warn{background:#fefce8;border:1px solid #fde68a;color:#a16207}
 .alert-ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
 .alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
@@ -172,26 +197,19 @@ CSS = """
 /* WHATSAPP */
 .wpp-btn{
     display:block;background:linear-gradient(135deg,#25D366 0%,#128C7E 100%);
-    color:#fff !important;padding:0.8rem;border-radius:12px;font-weight:700;
-    font-size:0.82rem;text-decoration:none;text-align:center;width:100%;
+    color:#fff !important;padding:0.75rem;border-radius:12px;font-weight:700;
+    font-size:0.8rem;text-decoration:none;text-align:center;width:100%;
     box-shadow:0 3px 12px rgba(37,211,102,0.18);margin-top:1rem;
 }
 .wpp-btn:hover{opacity:0.9;color:#fff !important;text-decoration:none}
 
-/* CARD */
-.info-card{background:var(--white);border-radius:var(--radius);padding:1.2rem;border:1px solid var(--gray-100);margin:0.6rem 0}
+/* INFO CARD */
+.info-card{background:var(--white);border-radius:var(--radius);padding:1.1rem;border:1px solid var(--gray-100);margin:0.5rem 0}
 
-/* STREAMLIT OVERRIDES */
-.stButton>button{
-    background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%) !important;
-    color:#fff !important;border:none !important;border-radius:12px !important;
-    padding:0.7rem 1.5rem !important;font-weight:700 !important;font-size:0.8rem !important;
-    box-shadow:0 3px 10px rgba(74,155,168,0.15);transition:all 0.2s;
-}
-.stButton>button:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(74,155,168,0.25)}
-.stSelectbox>div>div{border-radius:10px !important;border-color:var(--gray-200) !important;font-size:0.82rem !important}
-.stTextInput>div>div>input{border-radius:10px !important;border-color:var(--gray-200) !important;font-size:0.82rem !important;padding:0.55rem 0.7rem !important}
-.stNumberInput>div>div>input{border-radius:10px !important;border-color:var(--gray-200) !important;font-size:0.82rem !important}
+/* STREAMLIT INPUT OVERRIDES */
+.stSelectbox>div>div{border-radius:10px !important;border-color:var(--gray-200) !important;font-size:0.8rem !important}
+.stTextInput>div>div>input{border-radius:10px !important;border-color:var(--gray-200) !important;font-size:0.8rem !important;padding:0.5rem 0.7rem !important}
+.stNumberInput>div>div>input{border-radius:10px !important;border-color:var(--gray-200) !important;font-size:0.8rem !important}
 .stMultiSelect>div>div{border-radius:10px !important}
 div[data-baseweb="select"]>div{border-radius:10px !important}
 
@@ -200,7 +218,7 @@ footer{visibility:hidden}
 header{visibility:hidden}
 .stDeployButton{display:none}
 
-.app-footer{text-align:center;color:var(--gray-400);font-size:0.58rem;margin-top:2.5rem;padding:0.8rem 0;letter-spacing:0.5px;font-weight:500}
+.app-footer{text-align:center;color:var(--gray-400);font-size:0.55rem;margin-top:2.5rem;padding:0.8rem 0;letter-spacing:0.5px;font-weight:500}
 </style>
 """
 st.markdown(CSS, unsafe_allow_html=True)
@@ -214,7 +232,7 @@ CODIGOS_TIER = {"15081996": "PREMIUM", "13092020": "PLUS", "06121990": "BASE"}
 CUPONS_DESCONTO = {
     "TRANSFELOG10": {"desconto_pct": 10, "descricao": "10% de desconto", "validade": "2026-07-31"},
     "FRETE20": {"desconto_pct": 20, "descricao": "20% de desconto", "validade": "2026-07-15"},
-    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de desconto", "validade": "[CREDIT_DEBIT_CARD_EXPIRY]"},
+    "INAUGURA15": {"desconto_pct": 15, "descricao": "15% de desconto", "validade": "2026-08-31"},
 }
 FATOR_CUBAGEM = 300
 PROTECAO_MINIMO = 5.00
@@ -431,7 +449,7 @@ def formato_veiculo(v):
 
 
 # ============================================================
-# HEADER
+# HEADER - LOGO GRANDE
 # ============================================================
 logo_html = ""
 if logo_b64:
@@ -440,19 +458,12 @@ if logo_b64:
 st.markdown(f'<div class="app-header">{logo_html}</div>', unsafe_allow_html=True)
 
 # ============================================================
-# MENU TABS (COMPACTO - SEM BOTOES GRANDES)
+# MENU - FINO (TABS TEXTO)
 # ============================================================
 if "aba" not in st.session_state:
     st.session_state.aba = "Cotacao"
 
-abas = {"Cotacao": "COTA\u00c7\u00c3O", "Roteirizador": "ROTAS", "Motorista": "MOTORISTA"}
-tabs_html = '<div class="tab-menu">'
-for key, label in abas.items():
-    active = "active" if st.session_state.aba == key else ""
-    tabs_html += f'<div class="tab-item {active}">{label}</div>'
-tabs_html += '</div>'
-st.markdown(tabs_html, unsafe_allow_html=True)
-
+st.markdown("")
 col1, col2, col3 = st.columns(3)
 with col1:
     if st.button("Cota\u00e7\u00e3o", key="t1", use_container_width=True):
@@ -562,7 +573,10 @@ if aba == "Cotacao":
         st.markdown('<div class="alert alert-warn">Ped\u00e1gio, taxas de acesso, estadias e ajudantes cobrados \u00e0 parte.</div>', unsafe_allow_html=True)
 
         st.markdown("")
-        calcular = st.button("CALCULAR FRETE", use_container_width=True)
+        with st.container():
+            st.markdown('<div class="calc-btn">', unsafe_allow_html=True)
+            calcular = st.button("CALCULAR FRETE", use_container_width=True, key="btn_calc")
+            st.markdown('</div>', unsafe_allow_html=True)
 
         if calcular:
             if km_ida <= 0:
@@ -717,7 +731,11 @@ elif aba == "Motorista":
     st.markdown("")
     aceite = st.checkbox("Declaro que as informa\u00e7\u00f5es s\u00e3o verdadeiras e aceito os termos.")
     st.markdown("")
-    enviar = st.button("ENVIAR CADASTRO", use_container_width=True)
+
+    with st.container():
+        st.markdown('<div class="calc-btn">', unsafe_allow_html=True)
+        enviar = st.button("ENVIAR CADASTRO", use_container_width=True, key="btn_enviar")
+        st.markdown('</div>', unsafe_allow_html=True)
 
     if enviar:
         obrigatorios = [nome_completo, cep_motorista, endereco_mot, cidade_motorista, estado_motorista, telefone, whatsapp_motorista, email_motorista, placa, cnh_upload, doc_veiculo_upload]
